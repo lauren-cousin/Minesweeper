@@ -1,8 +1,8 @@
 package minesweeper;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.EventQueue;
-import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
@@ -10,11 +10,13 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import java.awt.GridLayout;
+
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Dimension;
-import javax.swing.JToolBar;
 
 public class Board extends JFrame {
 
@@ -23,10 +25,14 @@ public class Board extends JFrame {
 	private int numMines;
 	private Status status;
 	private Set<Cell> clickedCells;
+	private boolean flagging = false;
+	
 	private static Random rand = new Random();
 	
 	private final int CELL_WIDTH = 42;
 	private final int CELL_HEIGHT = 40;
+	public static final Icon FLAG_ICON = new ImageIcon(Cell.class.getResource(
+			"/resources/flag.png"));
 
 	/**
 	 * Launch the application.
@@ -47,7 +53,8 @@ public class Board extends JFrame {
 	}
 	
 	/**
-	 * Creates the board with the default parameters (9 cells by 9 cells, with 10 mines).
+	 * Creates the board with the default parameters (9 cells by 9 cells,
+	 * with 10 mines).
 	 */
 	public Board() {
 		this(9, 9, 10);
@@ -79,16 +86,37 @@ public class Board extends JFrame {
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
 		
-		JPanel panel = createButtonGrid(width, height);
-		contentPane.add(panel, BorderLayout.CENTER);
+		JPanel topPanel = createTopPanel();
+		contentPane.add(topPanel, BorderLayout.NORTH);
+		
+		JPanel grid = createButtonGrid(width, height);
+		contentPane.add(grid, BorderLayout.CENTER);
 		
 		JPanel bottomPanel = createBottomPanel();
-		
 		contentPane.add(bottomPanel, BorderLayout.SOUTH);
 		
 		this.numMines = numMines;
 		placeMines(numMines);
 		calculateNumAdjacentMines();
+	}
+
+	private JPanel createTopPanel() {
+		JPanel topPanel = new JPanel();
+		
+		JButton btnFlag = new JButton();
+		btnFlag.setIcon(FLAG_ICON);
+		btnFlag.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(status == Status.INPROGRESS) {
+					flagging = !flagging;
+					// TODO: probably could use better colors
+					btnFlag.setBackground(flagging? Color.GRAY : Color.WHITE);
+				}
+			}
+		});
+		topPanel.add(btnFlag);
+		
+		return topPanel;
 	}
 
 	private JPanel createBottomPanel() {
@@ -97,8 +125,9 @@ public class Board extends JFrame {
 		JButton btnStart = new JButton("Start");
 		btnStart.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// TODO: Start timer, remove button etc
+				// TODO: Start timer, etc
 				status = Status.INPROGRESS;
+				btnStart.setVisible(false);
 			}
 		});
 		bottomPanel.add(btnStart);
@@ -115,15 +144,20 @@ public class Board extends JFrame {
 	}
 
 	private JPanel createButtonGrid(int width, int height) {
-		cells = new Cell[width][height];
+		/*
+		 * Each element in cells is an array representing a horizontal row, so
+		 * the first number here is the height (number of rows).
+		 */
+		cells = new Cell[height][width];
 		
 		JPanel cellGrid = new JPanel();
 		cellGrid.setPreferredSize(new Dimension(CELL_WIDTH * width, CELL_HEIGHT * height));
 		cellGrid.setLayout(new GridLayout(cells.length, cells[0].length, 0, 0));
 		
 		for(int x = 0; x < cells.length; x++) {
-			for(int y = 0; y < cells.length; y++) {
+			for(int y = 0; y < cells[0].length; y++) {
 				cells[x][y] = new Cell();
+				cells[x][y].setBackground(new Color(200, 200, 200)); // light grey
 				
 				// The action listener requires its local variables to be final
 				final int thisX = x;
@@ -132,14 +166,18 @@ public class Board extends JFrame {
 				cells[x][y].addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						if(status == Status.INPROGRESS) {
-							cells[thisX][thisY].reveal();
-							
-							if(cells[thisX][thisY].getNumAdjacentMines() == 0) {
-								// Auto-reveal cells around a "0"
-								revealAround(thisX, thisY);
+							if(flagging) {
+								cells[thisX][thisY].toggleFlag();
+							} else if(!cells[thisX][thisY].hasFlag()) {
+								cells[thisX][thisY].reveal();
+								
+								if(cells[thisX][thisY].getNumAdjacentMines() == 0) {
+									// Auto-reveal cells around a "0"
+									revealAround(thisX, thisY);
+								}
+								
+								checkGameState();
 							}
-							
-							// TODO: Check whether game is won or lost
 						}
 					}
 				});
@@ -149,7 +187,7 @@ public class Board extends JFrame {
 		
 		/* The content pane uses BorderLayout, but we don't want the grid to
 		 * expand to fill the whole center area, so we place the grid in a new
-		 * JPanel (which uses FlowLayout and won't resize its contents) 
+		 * JPanel (which uses FlowLayout and won't resize its contents).
 		 */
 		JPanel gridContainer = new JPanel();
 		gridContainer.add(cellGrid);
@@ -165,7 +203,7 @@ public class Board extends JFrame {
 					continue;
 				
 				Cell thisCell = cells[x + xOff][y + yOff];
-				if(!thisCell.isRevealed()) {
+				if(!thisCell.isRevealed() && !thisCell.hasFlag()) {
 					thisCell.reveal();
 					// If we newly uncovered a "0", reveal around that as well
 					if(thisCell.getNumAdjacentMines() == 0) {
@@ -182,7 +220,7 @@ public class Board extends JFrame {
 	private void calculateNumAdjacentMines() {
 		// For each non-mine cell in the board,
 		for(int x = 0; x < cells.length; x++) {
-			for(int y = 0; y < cells.length; y++) {
+			for(int y = 0; y < cells[0].length; y++) {
 				if(cells[x][y].hasMine()) {
 					cells[x][y].setNumAdjacentMines(-1);
 					continue;
@@ -224,6 +262,28 @@ public class Board extends JFrame {
 				numPlaced++;
 			}
 		}
+	}
+	
+	private void checkGameState() {
+		boolean isWon = true;
+		for(Cell[] row : cells) {
+			for(Cell c : row) {
+				if((!c.hasMine()) && (!c.isRevealed())) {
+					// Unrevealed cell with no mine; game is not won yet
+					isWon = false;
+					/* Continue rather than break because we still need to check
+					   remaining cells for revealed mines */
+					continue;
+				}
+				if(c.hasMine() && c.isRevealed()) {
+					// Mine was revealed
+					status = Status.LOSE;
+					return;
+				}
+			}
+		}
+		if(isWon)
+			status = Status.WIN;
 	}
 
 }

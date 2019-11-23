@@ -2,6 +2,7 @@ package minesweeper;
 
 import java.awt.Color;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
 public class Cell extends JButton {
@@ -22,9 +23,17 @@ public class Cell extends JButton {
 		numAdjacentMines = 0;
 	}
 	
-	public Cell(boolean mine, boolean flag) {
+	/**
+	 * Creates a cell with parameters, to be used when restoring a saved game.
+	 * 
+	 * @param mine whether this cell has a mine
+	 * @param flag whether this cell is marked with a flag
+	 * @param revealed whether this cell has been revealed
+	 */
+	public Cell(boolean mine, boolean flag, boolean revealed) {
 		this.mine = mine;
 		this.flag = flag;
+		this.revealed = revealed;
 		numAdjacentMines = 0;
 	}
 	
@@ -38,7 +47,7 @@ public class Cell extends JButton {
 	}
 	
 	/**
-	 * Places a mine in this cell. This method is intneded to be used when creating
+	 * Places a mine in this cell. This method is used when creating
 	 * a game board.
 	 */
 	public void setMine() {
@@ -46,8 +55,8 @@ public class Cell extends JButton {
 	}
 
 	/**
-	 * Tells this cell how many mines are adjacent to it in the board. This is not
-	 * necessary for cells that have mines.
+	 * Tells this cell how many mines are adjacent to it in the board. If this
+	 * cell has a mine, the number does not matter so long as it is not 0.
 	 * 
 	 * @param numAdjacentMines the number of adjacent mines
 	 */
@@ -62,6 +71,35 @@ public class Cell extends JButton {
 	 */
 	public int getNumAdjacentMines() {
 		return numAdjacentMines;
+	}
+
+	/**
+	 * Returns true if this cell has been revealed already.
+	 * 
+	 * @return whether the cell is revealed
+	 */
+	public boolean isRevealed() {
+		return revealed;
+	}
+
+	/**
+	 * Toggles whether there is a flag on this cell, unless the cell is already
+	 * revealed.
+	 */
+	public void toggleFlag() {
+		if(!revealed) {
+			flag = !flag;
+			setIcon(flag? Board.FLAG_ICON : null);
+		}
+	}
+	
+	/**
+	 * Returns true if and only if this cell is marked with a flag.
+	 * 
+	 * @return whether there is a flag on this cell
+	 */
+	public boolean hasFlag() {
+		return flag;
 	}
 	
 	
@@ -87,14 +125,5 @@ public class Cell extends JButton {
 			}
 		}
 		
-	}
-
-	/**
-	 * Returns true if this cell has been revealed already.
-	 * 
-	 * @return whether the cell is revealed
-	 */
-	public boolean isRevealed() {
-		return revealed;
 	}
 }
