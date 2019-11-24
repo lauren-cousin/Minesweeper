@@ -131,7 +131,6 @@ public class Cell extends JButton {
 			if(numAdjacentMines != 0) {
 				setIcon(new ImageIcon(Cell.class.getResource(
 						"/resources/" + numAdjacentMines + ".png")));
-				//setText(Integer.toString(numAdjacentMines));
 			}
 		}
 		
