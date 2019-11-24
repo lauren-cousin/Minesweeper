@@ -5,6 +5,12 @@ import java.awt.Color;
 import javax.swing.JButton;
 
 /**
+ * Represents a single cell in a Minesweeper game board.
+ * <p>
+ * The cell may contain a hidden mine, and the user may mark it with a flag or
+ * click it to reveal whether it has a mine. If it has a mine, revealing it
+ * causes the cell to turn red; otherwise, it displays the number of adjacent
+ * cells which have mines.
  * 
  * @author cameronlentz
  *
@@ -107,7 +113,6 @@ public class Cell extends JButton {
 		return flag;
 	}
 	
-	
 	/**
 	 * Reveals this cell, unless it is flagged. If the cell is a mine, you lose
 	 * the game; otherwise, the cell turns a lighter color and is marked with
@@ -120,12 +125,9 @@ public class Cell extends JButton {
 		
 		if(mine) {
 			setBackground(Color.RED);
-			// TODO: Finish lose condition
 		} else {
 			setBackground(Color.WHITE);
-			if(numAdjacentMines == 0) {
-				// TODO: Reveal adjacent cells
-			} else {
+			if(numAdjacentMines != 0) {
 				setText(Integer.toString(numAdjacentMines));
 			}
 		}
