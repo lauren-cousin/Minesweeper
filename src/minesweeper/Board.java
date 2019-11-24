@@ -3,6 +3,7 @@ package minesweeper;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.EventQueue;
+import java.awt.Font;
 import java.util.Random;
 import java.util.Set;
 
@@ -105,6 +106,7 @@ public class Board extends JFrame {
 			}
 		});
 		topPanel.add(gameTimer.createLblTimer());
+		topPanel.add(createTitle());
 		topPanel.add(btnFlag);
 		
 		return topPanel;
@@ -188,6 +190,15 @@ public class Board extends JFrame {
 		gridContainer.add(cellGrid);
 		
 		return gridContainer;
+	}
+	
+	// TODO: Consistent fonts and margins
+	private JLabel createTitle() {
+		JLabel title = new JLabel("Minesweeper");
+		title.setHorizontalAlignment(SwingConstants.CENTER);
+		title.setBorder(new EmptyBorder(5, 40, 5, 40));
+		title.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		return title;
 	}
 	
 	private void revealAround(int x, int y) {
