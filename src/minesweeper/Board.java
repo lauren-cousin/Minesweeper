@@ -22,6 +22,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Dimension;
 
+/**
+ * 
+ * @author cameronlentz
+ * @author laurencousin
+ *
+ */
 @SuppressWarnings("serial")
 public class Board extends JFrame {
 

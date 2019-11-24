@@ -4,6 +4,11 @@ import java.awt.Color;
 
 import javax.swing.JButton;
 
+/**
+ * 
+ * @author cameronlentz
+ *
+ */
 @SuppressWarnings("serial")
 public class Cell extends JButton {
 

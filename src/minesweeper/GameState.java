@@ -2,6 +2,11 @@ package minesweeper;
 
 import java.util.Set;
 
+/**
+ * 
+ * @author cameronlentz
+ *
+ */
 public class GameState {
 	private int width;
 	private int height;

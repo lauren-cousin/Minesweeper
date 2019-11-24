@@ -7,6 +7,11 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
 
+/**
+ * 
+ * @author laurencousin
+ *
+ */
 public class GameTimer {
 	private String time = "00";
 	private Timer timer;

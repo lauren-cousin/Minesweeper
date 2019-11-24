@@ -4,6 +4,12 @@ import java.awt.EventQueue;
 import java.io.File;
 
 
+/**
+ * 
+ * @author laurencousin
+ * @author cameronlentz
+ *
+ */
 public class Minesweeper {
 
 	/**
