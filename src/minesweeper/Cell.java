@@ -2,6 +2,7 @@ package minesweeper;
 
 import java.awt.Color;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
 /**
@@ -128,7 +129,9 @@ public class Cell extends JButton {
 		} else {
 			setBackground(Color.WHITE);
 			if(numAdjacentMines != 0) {
-				setText(Integer.toString(numAdjacentMines));
+				setIcon(new ImageIcon(Cell.class.getResource(
+						"/resources/" + numAdjacentMines + ".png")));
+				//setText(Integer.toString(numAdjacentMines));
 			}
 		}
 		
