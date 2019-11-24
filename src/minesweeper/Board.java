@@ -2,7 +2,6 @@ package minesweeper;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.EventQueue;
 import java.awt.Font;
 import java.util.Random;
 import java.util.Set;
