@@ -36,6 +36,7 @@ public class Board extends JFrame {
 
 	private JPanel contentPane;
 	private Cell[][] cells;
+	private int width, height;
 	private int numMines;
 	private Status status;
 	private Set<Cell> clickedCells;
@@ -43,14 +44,16 @@ public class Board extends JFrame {
 	
 	private static Random rand = new Random();
 	
-	private final int CELL_WIDTH = 42;
-	private final int CELL_HEIGHT = 40;
+	private final int CELL_WIDTH = 35;
+	private final int CELL_HEIGHT = 35;
 	public static final Icon FLAG_ICON = new ImageIcon(Cell.class.getResource(
 			"/resources/flag.png"));
 	static final Icon TIMER_ICON = new ImageIcon(GameTimer.class.getResource(
 			"/resources/hourglass.png"));
 	
 	GameTimer gameTimer = new GameTimer();
+	private JButton btnStart;
+	private JPanel grid;
 	
 	/**
 	 * Creates the board with the default parameters (9 cells by 9 cells,
@@ -90,15 +93,15 @@ public class Board extends JFrame {
 		JPanel topPanel = createTopPanel();
 		contentPane.add(topPanel, BorderLayout.NORTH);
 		
-		JPanel grid = createButtonGrid(width, height);
+		grid = createButtonGrid(width, height);
 		contentPane.add(grid, BorderLayout.CENTER);
 		
 		JPanel bottomPanel = createBottomPanel();
 		contentPane.add(bottomPanel, BorderLayout.SOUTH);
 		
-		this.numMines = numMines;
-		placeMines(numMines);
-		calculateNumAdjacentMines();
+		this.width = width;
+		this.height = height;
+		this.numMines = numMines; // Mines are placed when user clicks Start
 	}
 
 	/**
@@ -111,6 +114,7 @@ public class Board extends JFrame {
 		
 		JButton btnFlag = new JButton();
 		btnFlag.setBackground(Color.WHITE);
+		btnFlag.setOpaque(true);
 		btnFlag.setIcon(FLAG_ICON);
 		btnFlag.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -136,12 +140,18 @@ public class Board extends JFrame {
 	private JPanel createBottomPanel() {
 		JPanel bottomPanel = new JPanel();
 		
-		JButton btnStart = new JButton("Start");
+		btnStart = new JButton("Start");
 		btnStart.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// TODO: Start timer, etc
 				status = Status.INPROGRESS;
 				btnStart.setVisible(false);
+				
+				// Remove the existing game grid and replace it with a new one
+				contentPane.remove(grid);
+				grid = createButtonGrid(width, height);
+				contentPane.add(grid, BorderLayout.CENTER);
+				placeMines(numMines);
+				calculateNumAdjacentMines();
 				
 				// Start timer
 				gameTimer.start();
@@ -183,6 +193,7 @@ public class Board extends JFrame {
 			for(int y = 0; y < cells[0].length; y++) {
 				cells[x][y] = new Cell();
 				cells[x][y].setBackground(new Color(200, 200, 200)); // light grey
+				cells[x][y].setOpaque(true);
 				
 				// The action listener requires its local variables to be final
 				final int thisX = x;
@@ -337,7 +348,7 @@ public class Board extends JFrame {
 							}
 						}
 					}
-					return;
+					break;
 				}
 			}
 		}
@@ -345,6 +356,11 @@ public class Board extends JFrame {
 			status = Status.WIN;
 			gameTimer.stop();
 			// TODO: Something to show player that game is won
+		}
+		
+		if(status != Status.INPROGRESS) {
+			btnStart.setText("Play again?");
+			btnStart.setVisible(true);
 		}
 	}
 
