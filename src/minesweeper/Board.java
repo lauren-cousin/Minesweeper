@@ -323,12 +323,15 @@ public class Board extends JFrame {
 				if(c.hasMine() && c.isRevealed()) {
 					// Mine was revealed
 					status = Status.LOSE;
+					gameTimer.stop();
 					return;
 				}
 			}
 		}
-		if(isWon)
+		if(isWon) {
 			status = Status.WIN;
+			gameTimer.stop();
+		}
 	}
 
 }
