@@ -7,8 +7,11 @@ import java.util.Random;
 import java.util.Set;
 
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+
 import java.awt.GridLayout;
 
 import javax.swing.Icon;
@@ -18,6 +21,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Dimension;
 
+@SuppressWarnings("serial")
 public class Board extends JFrame {
 
 	private JPanel contentPane;
@@ -33,24 +37,10 @@ public class Board extends JFrame {
 	private final int CELL_HEIGHT = 40;
 	public static final Icon FLAG_ICON = new ImageIcon(Cell.class.getResource(
 			"/resources/flag.png"));
-
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					// Use parameterized constructor to experiment with
-					// different board sizes and mine amounts
-					Board frame = new Board();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+	static final Icon TIMER_ICON = new ImageIcon(GameTimer.class.getResource(
+			"/resources/hourglass.png"));
+	
+	GameTimer gameTimer = new GameTimer();
 	
 	/**
 	 * Creates the board with the default parameters (9 cells by 9 cells,
@@ -114,6 +104,7 @@ public class Board extends JFrame {
 				}
 			}
 		});
+		topPanel.add(gameTimer.createLblTimer());
 		topPanel.add(btnFlag);
 		
 		return topPanel;
@@ -128,6 +119,9 @@ public class Board extends JFrame {
 				// TODO: Start timer, etc
 				status = Status.INPROGRESS;
 				btnStart.setVisible(false);
+				
+				// Start timer
+				gameTimer.start();
 			}
 		});
 		bottomPanel.add(btnStart);
@@ -135,7 +129,8 @@ public class Board extends JFrame {
 		JButton btnQuit = new JButton("Quit");
 		btnQuit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// TODO: Quit game
+				gameTimer.stop();
+				Minesweeper.quit();
 			}
 		});
 		bottomPanel.add(btnQuit);

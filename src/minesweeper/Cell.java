@@ -2,9 +2,9 @@ package minesweeper;
 
 import java.awt.Color;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
+@SuppressWarnings("serial")
 public class Cell extends JButton {
 
 	private boolean mine;
