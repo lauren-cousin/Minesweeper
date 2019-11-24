@@ -22,6 +22,10 @@ import java.awt.event.ActionEvent;
 import java.awt.Dimension;
 
 /**
+ * Represents a board for the game Minesweeper, displaying the title of the game, 
+ * a timer, a button for marking cells with flags, and a grid of cells.<br/>
+ * A start button and a quit button are displayed below the grid.<br/>
+ * There are also buttons to load a saved game, or save your current game.
  * 
  * @author cameronlentz
  * @author laurencousin
@@ -57,7 +61,7 @@ public class Board extends JFrame {
 	}
 
 	/**
-	 * Create the frame.
+	 * Creates the frame.
 	 */
 	public Board(int width, int height, int numMines) {
 		if(width < 3 || height < 3) {
@@ -96,6 +100,11 @@ public class Board extends JFrame {
 		calculateNumAdjacentMines();
 	}
 
+	/**
+	 * Creates the top panel, containing the game title, timer, and flag button.
+	 * 
+	 * @return the top panel
+	 */
 	private JPanel createTopPanel() {
 		JPanel topPanel = new JPanel();
 		
@@ -117,6 +126,11 @@ public class Board extends JFrame {
 		return topPanel;
 	}
 
+	/**
+	 * Creates the bottom panel, containing the Start button and Quit button.
+	 * 
+	 * @return the bottom panel
+	 */
 	private JPanel createBottomPanel() {
 		JPanel bottomPanel = new JPanel();
 		
@@ -145,6 +159,13 @@ public class Board extends JFrame {
 		return bottomPanel;
 	}
 
+	/**
+	 * Creates the button grid, containing a grid of clickable cells.
+	 * 
+	 * @param width of grid
+	 * @param height of grid
+	 * @return the button grid
+	 */
 	private JPanel createButtonGrid(int width, int height) {
 		/*
 		 * Each element in cells is an array representing a horizontal row, so
@@ -197,7 +218,11 @@ public class Board extends JFrame {
 		return gridContainer;
 	}
 	
-	// TODO: Consistent fonts and margins
+	/**
+	 * Creates the title of the game to be displayed.
+	 * 
+	 * @return the title
+	 */
 	private JLabel createTitle() {
 		JLabel title = new JLabel("Minesweeper");
 		title.setHorizontalAlignment(SwingConstants.CENTER);
@@ -206,6 +231,12 @@ public class Board extends JFrame {
 		return title;
 	}
 	
+	/**
+	 * Reveals around the coordinates passed in as paramters.
+	 * 
+	 * @param x
+	 * @param y
+	 */
 	private void revealAround(int x, int y) {
 		for(int xOff = -1; xOff <= 1; xOff++) {
 			for(int yOff = -1; yOff <= 1; yOff++) {
@@ -275,6 +306,9 @@ public class Board extends JFrame {
 		}
 	}
 	
+	/**
+	 * Checks the state of the game.
+	 */
 	private void checkGameState() {
 		boolean isWon = true;
 		for(Cell[] row : cells) {
