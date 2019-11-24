@@ -81,6 +81,7 @@ public class Board extends JFrame {
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, CELL_WIDTH * width + 30, CELL_HEIGHT * height + 150);
+		setTitle("Minesweeper");
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
@@ -109,12 +110,13 @@ public class Board extends JFrame {
 		JPanel topPanel = new JPanel();
 		
 		JButton btnFlag = new JButton();
+		btnFlag.setBackground(Color.WHITE);
 		btnFlag.setIcon(FLAG_ICON);
 		btnFlag.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(status == Status.INPROGRESS) {
 					flagging = !flagging;
-					// TODO: probably could use better colors
+					// TODO: probably could use better colors maybe
 					btnFlag.setBackground(flagging? Color.GRAY : Color.WHITE);
 				}
 			}
@@ -208,7 +210,8 @@ public class Board extends JFrame {
 			}
 		}
 		
-		/* The content pane uses BorderLayout, but we don't want the grid to
+		/*
+		 * The content pane uses BorderLayout, but we don't want the grid to
 		 * expand to fill the whole center area, so we place the grid in a new
 		 * JPanel (which uses FlowLayout and won't resize its contents).
 		 */
@@ -232,7 +235,7 @@ public class Board extends JFrame {
 	}
 	
 	/**
-	 * Reveals around the coordinates passed in as paramters.
+	 * Reveals around the coordinates passed in as parameters.
 	 * 
 	 * @param x
 	 * @param y
@@ -324,6 +327,16 @@ public class Board extends JFrame {
 					// Mine was revealed
 					status = Status.LOSE;
 					gameTimer.stop();
+					// Reveal all mines to the user
+					for(int x = 0; x < cells.length; x++) {
+						for(int y = 0; y < cells[0].length; y++) {
+							if(cells[x][y].hasMine()) {
+								cells[x][y].reveal();
+							} else if(cells[x][y].hasFlag()) {
+								// TODO: Indicate flag here was misplaced
+							}
+						}
+					}
 					return;
 				}
 			}
@@ -331,6 +344,7 @@ public class Board extends JFrame {
 		if(isWon) {
 			status = Status.WIN;
 			gameTimer.stop();
+			// TODO: Something to show player that game is won
 		}
 	}
 
