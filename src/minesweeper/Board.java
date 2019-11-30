@@ -3,6 +3,7 @@ package minesweeper;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
+import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
@@ -10,6 +11,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
 import java.awt.GridLayout;
@@ -18,6 +20,8 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.ActionEvent;
 import java.awt.Dimension;
 
@@ -40,6 +44,7 @@ public class Board extends JFrame {
 	private int numMines;
 	private Status status;
 	private boolean flagging = false;
+	private boolean tempFlagging = false;
 	
 	private static Random rand = new Random();
 	
@@ -179,8 +184,8 @@ public class Board extends JFrame {
 	/**
 	 * Creates the button grid, containing a grid of clickable cells.
 	 * 
-	 * @param width of grid
-	 * @param height of grid
+	 * @param width the number of columns in the grid
+	 * @param height the number of rows in the grid
 	 * @return the button grid
 	 */
 	private JPanel createButtonGrid(int width, int height) {
@@ -205,10 +210,22 @@ public class Board extends JFrame {
 				cells[x][y].addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						if(status == Status.INPROGRESS) {
-							if(flagging) {
+							if(flagging || tempFlagging) {
 								cells[thisX][thisY].toggleFlag();
+								tempFlagging = false;
 							} else if(!cells[thisX][thisY].hasFlag()) {
-								cells[thisX][thisY].reveal();
+								if(cells[thisX][thisY].isRevealed()) {
+									/* 
+									 * If a cell is revealed and displaying a
+									 * number, and you've already placed that
+									 * many flags next to it, clicking the
+									 * number will "quick-reveal" the rest of
+									 * the adjacent cells.
+									 */
+									tryQuickReveal(thisX, thisY);
+								} else {
+									cells[thisX][thisY].reveal();
+								}
 								
 								if(cells[thisX][thisY].getNumAdjacentMines() == 0) {
 									// Auto-reveal cells around a "0"
@@ -220,6 +237,50 @@ public class Board extends JFrame {
 						}
 					}
 				});
+				
+				/* 
+				 * Right-click detection.
+				 * JButton's ActionListener is only triggered by a left click,
+				 * so we use a MouseListener to detect right clicks.
+				 */
+				cells[x][y].addMouseListener(new MouseListener() {
+					/* 
+					 * mouseClicked won't detect a click if the mouse is moved
+					 * at all while the button is held, which feels clunky and
+					 * unresponsive. Instead I use the other methods and a
+					 * tempFlagging boolean for a nicer-feeling result.
+					 */
+					@Override
+					public void mouseClicked(MouseEvent e) {}
+					
+					@Override
+					public void mousePressed(MouseEvent e) {
+						if(status == Status.INPROGRESS &&
+								SwingUtilities.isRightMouseButton(e))
+							tempFlagging = true;
+					}
+
+					@Override
+					public void mouseReleased(MouseEvent e) {
+						if(status == Status.INPROGRESS &&
+								SwingUtilities.isRightMouseButton(e)) {
+							if(tempFlagging)
+								cells[thisX][thisY].toggleFlag();
+							tempFlagging = false;
+						}
+					}
+
+					@Override
+					public void mouseEntered(MouseEvent e) {}
+
+					@Override
+					public void mouseExited(MouseEvent e) {
+						// Dragging out of the cell cancels the flag attempt.
+						if(status == Status.INPROGRESS)
+							tempFlagging = false;
+					}
+				});
+				
 				cellGrid.add(cells[x][y]);
 			}
 		}
@@ -255,6 +316,8 @@ public class Board extends JFrame {
 	 * @param y
 	 */
 	private void revealAround(int x, int y) {
+		// This method can't use adjacentCells() because it needs to keep track
+		// of each adjacent cell's coordinates for the recursive call.
 		for(int xOff = -1; xOff <= 1; xOff++) {
 			for(int yOff = -1; yOff <= 1; yOff++) {
 				if((x + xOff < 0) || (x + xOff >= cells.length) ||
@@ -274,30 +337,69 @@ public class Board extends JFrame {
 	}
 	
 	/**
+	 * Attempts to "quick-reveal" around the cell at the given coordinates. If
+	 * the cell at the coordinates is showing a number and already has that many
+	 * flags around it, the remaining adjacent cells are automatically revealed.
+	 * 
+	 * @param x
+	 * @param y
+	 */
+	private void tryQuickReveal(int x, int y) {
+		if(!cells[x][y].isRevealed())
+			return;
+		
+		int flagCount = 0;
+		for(Cell c : adjacentCells(x, y)) {
+			if(c.hasFlag())
+				flagCount++;
+		}
+		
+		if(flagCount == cells[x][y].getNumAdjacentMines()) {
+			revealAround(x, y);
+		}
+	}
+	
+	/**
+	 * Returns a set of up to 8 cells adjacent to the given coordinates.
+	 * 
+	 * @param x
+	 * @param y
+	 * @return a set of up to 8 cells
+	 */
+	private Set<Cell> adjacentCells(int x, int y) {
+		Set<Cell> adjCells = new HashSet<>();
+		for(int xOff = -1; xOff <= 1; xOff++) {
+			for(int yOff = -1; yOff <= 1; yOff++) {
+				// Ignore cells outside of the board
+				if((x + xOff < 0) || (x + xOff >= cells.length) ||
+						(y + yOff < 0) || (y + yOff >= cells[0].length))
+					continue;
+				
+				adjCells.add(cells[x + xOff][y + yOff]);
+			}
+		}
+		adjCells.remove(cells[x][y]);
+		return adjCells;
+	}
+	
+	/**
 	 * Tells each cell in the board how many mines are adjacent to it.
 	 */
 	private void calculateNumAdjacentMines() {
-		// For each non-mine cell in the board,
+		// For each non-mine cell in the board
 		for(int x = 0; x < cells.length; x++) {
 			for(int y = 0; y < cells[0].length; y++) {
 				if(cells[x][y].hasMine()) {
+					// The value for cells with mines doesn't matter as long as
+					// it's non-zero
 					cells[x][y].setNumAdjacentMines(-1);
 					continue;
 				}
 				
 				int count = 0;
-				// look at the neighborhood of surrounding cells,
-				for(int xOff = -1; xOff <= 1; xOff++) {
-					for(int yOff = -1; yOff <= 1; yOff++) {
-						// (ignoring cells outside of the board)
-						if((x + xOff < 0) || (x + xOff >= cells.length) ||
-								(y + yOff < 0) || (y + yOff >= cells[0].length))
-							continue;
-						
-						// and increment count for each one that has a mine.
-						if(cells[x + xOff][y + yOff].hasMine())
-							count++;
-					}
+				for(Cell c : adjacentCells(x, y)) {
+					if(c.hasMine())
+						count++;
 				}
 				
 				cells[x][y].setNumAdjacentMines(count);
@@ -347,6 +449,7 @@ public class Board extends JFrame {
 							if(cells[x][y].hasMine()) {
 								cells[x][y].reveal();
 							} else if(cells[x][y].hasFlag()) {
+								// Safe cell with a flag
 								cells[x][y].setIcon(new ImageIcon(Cell.class.getResource(
 										"/resources/missedflag.png")));
 							}
@@ -359,11 +462,11 @@ public class Board extends JFrame {
 		if(isWon) {
 			status = Status.WIN;
 			gameTimer.stop();
-			// Mark remaining mines and turn the board a pale yellow
+			// Mark remaining mines and turn the board a pale green
 			for(Cell[] row : cells) {
 				for(Cell c : row) {
 					if(c.isRevealed())
-						c.setBackground(new Color(255, 255, 220));
+						c.setBackground(new Color(230, 255, 200));
 					else if(c.hasMine())
 						c.setIcon(FLAG_ICON);
 				}
