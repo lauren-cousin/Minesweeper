@@ -25,27 +25,32 @@ public class Cell extends JButton {
 	private int numAdjacentMines;
 	
 	/**
-	 * Creates a cell with no mine and no flag.
+	 * Constructs a fresh cell with no mine and no flag.
 	 */
 	public Cell() {
-		super();
-		
-		mine = false;
-		flag = false;
-		numAdjacentMines = 0;
+		this(false, false, false);
 	}
 	
 	/**
-	 * Creates a cell with parameters, to be used when restoring a saved game.
+	 * Constructs a cell based on the parameters.
 	 * 
 	 * @param mine whether this cell has a mine
 	 * @param flag whether this cell is marked with a flag
 	 * @param revealed whether this cell has been revealed
 	 */
 	public Cell(boolean mine, boolean flag, boolean revealed) {
-		this.mine = mine;
-		this.flag = flag;
-		this.revealed = revealed;
+		super();
+		
+		setBackground(new Color(200, 200, 200)); // light grey
+		setOpaque(true);
+		
+		if(mine)
+			setMine();
+		if(revealed)
+			reveal();
+		if(flag)
+			toggleFlag();
+		
 		numAdjacentMines = 0;
 	}
 	
@@ -126,6 +131,7 @@ public class Cell extends JButton {
 		
 		if(mine) {
 			setBackground(Color.RED);
+			// TODO: Mine icon?
 		} else {
 			setBackground(Color.WHITE);
 			if(numAdjacentMines != 0) {
