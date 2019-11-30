@@ -1,5 +1,6 @@
 package minesweeper;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -11,7 +12,8 @@ import java.util.Set;
  * @author cameronlentz
  *
  */
-public class GameState {
+@SuppressWarnings("serial")
+public class GameState implements Serializable {
 	private int width;
 	private int height;
 	
