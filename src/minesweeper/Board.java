@@ -39,16 +39,15 @@ public class Board extends JFrame {
 	private int width, height;
 	private int numMines;
 	private Status status;
-	private Set<Cell> clickedCells;
 	private boolean flagging = false;
 	
 	private static Random rand = new Random();
 	
-	private final int CELL_WIDTH = 35;
-	private final int CELL_HEIGHT = 35;
+	private static final int CELL_WIDTH = 35;
+	private static final int CELL_HEIGHT = 35;
 	public static final Icon FLAG_ICON = new ImageIcon(Cell.class.getResource(
 			"/resources/flag.png"));
-	static final Icon TIMER_ICON = new ImageIcon(GameTimer.class.getResource(
+	public static final Icon TIMER_ICON = new ImageIcon(GameTimer.class.getResource(
 			"/resources/hourglass.png"));
 	
 	GameTimer gameTimer = new GameTimer();
@@ -71,9 +70,9 @@ public class Board extends JFrame {
 			throw new IllegalArgumentException("Width and height of board must "
 					+ "be at least 3");
 		}
-		if(numMines < width * height / 20) {
+		if(numMines < width * height / 20 + 1) {
 			throw new IllegalArgumentException("Too few mines for the selected "
-					+ "board size (should have at least " + width * height / 20
+					+ "board size (should have at least " + width * height / 20 + 1
 					+ " for " + width + "*" + height + " board)");
 		}
 		if(numMines > width * height / 2) {
@@ -93,11 +92,17 @@ public class Board extends JFrame {
 		JPanel topPanel = createTopPanel();
 		contentPane.add(topPanel, BorderLayout.NORTH);
 		
+		/*
+		 * Technically this grid is just for show, since the "Start"/"Play again"
+		 * button replaces the current grid with a new one.
+		 */
 		grid = createButtonGrid(width, height);
 		contentPane.add(grid, BorderLayout.CENTER);
 		
 		JPanel bottomPanel = createBottomPanel();
 		contentPane.add(bottomPanel, BorderLayout.SOUTH);
+		
+		pack();
 		
 		this.width = width;
 		this.height = height;
@@ -120,11 +125,11 @@ public class Board extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				if(status == Status.INPROGRESS) {
 					flagging = !flagging;
-					// TODO: probably could use better colors maybe
 					btnFlag.setBackground(flagging? Color.GRAY : Color.WHITE);
 				}
 			}
 		});
+		
 		topPanel.add(gameTimer.createLblTimer());
 		topPanel.add(createTitle());
 		topPanel.add(btnFlag);
@@ -192,8 +197,6 @@ public class Board extends JFrame {
 		for(int x = 0; x < cells.length; x++) {
 			for(int y = 0; y < cells[0].length; y++) {
 				cells[x][y] = new Cell();
-				cells[x][y].setBackground(new Color(200, 200, 200)); // light grey
-				cells[x][y].setOpaque(true);
 				
 				// The action listener requires its local variables to be final
 				final int thisX = x;
@@ -338,13 +341,14 @@ public class Board extends JFrame {
 					// Mine was revealed
 					status = Status.LOSE;
 					gameTimer.stop();
-					// Reveal all mines to the user
+					// Reveal all mines & wrongly placed flags to the user
 					for(int x = 0; x < cells.length; x++) {
 						for(int y = 0; y < cells[0].length; y++) {
 							if(cells[x][y].hasMine()) {
 								cells[x][y].reveal();
 							} else if(cells[x][y].hasFlag()) {
-								// TODO: Indicate flag here was misplaced
+								cells[x][y].setIcon(new ImageIcon(Cell.class.getResource(
+										"/resources/missedflag.png")));
 							}
 						}
 					}
@@ -355,13 +359,30 @@ public class Board extends JFrame {
 		if(isWon) {
 			status = Status.WIN;
 			gameTimer.stop();
-			// TODO: Something to show player that game is won
+			// Mark remaining mines and turn the board a pale yellow
+			for(Cell[] row : cells) {
+				for(Cell c : row) {
+					if(c.isRevealed())
+						c.setBackground(new Color(255, 255, 220));
+					else if(c.hasMine())
+						c.setIcon(FLAG_ICON);
+				}
+			}
 		}
 		
 		if(status != Status.INPROGRESS) {
 			btnStart.setText("Play again?");
 			btnStart.setVisible(true);
 		}
+	}
+	
+	/**
+	 * Returns the current state of the game as a GameState object.
+	 * 
+	 * @return the current game state
+	 */
+	public GameState getGameState() {
+		return new GameState(cells, gameTimer);
 	}
 
 }
