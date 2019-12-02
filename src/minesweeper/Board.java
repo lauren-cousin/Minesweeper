@@ -39,7 +39,7 @@ import java.awt.Dimension;
  *
  */
 @SuppressWarnings("serial")
-public class Board extends JFrame {
+public class Board extends JFrame implements ActionListener {
 
 	private JPanel contentPane;
 	private Cell[][] cells;
@@ -62,6 +62,10 @@ public class Board extends JFrame {
 	GameTimer gameTimer = new GameTimer();
 	private JButton btnStart;
 	private JPanel grid;
+	
+	private JMenuItem save;
+	private JMenuItem load;
+	private JMenuItem howToPlay;
 	
 	/**
 	 * Creates the board with the default parameters (9 cells by 9 cells,
@@ -320,9 +324,9 @@ public class Board extends JFrame {
 		JMenu fileMenu = new JMenu("File");
 		JMenu helpMenu = new JMenu("Help");
 		
-		JMenuItem save = new JMenuItem("Save");
-		JMenuItem load = new JMenuItem("Load");
-		JMenuItem howToPlay = new JMenuItem("How to Play");
+		save = new JMenuItem("Save");
+		load = new JMenuItem("Load");
+		howToPlay = new JMenuItem("How to Play");
 		
 		fileMenu.add(save);
 		fileMenu.add(load);
@@ -331,6 +335,11 @@ public class Board extends JFrame {
 		menuBar.add(fileMenu);
 		menuBar.add(helpMenu);
 		
+		// add ActionListener to JMenuItems 
+        save.addActionListener(this); 
+        load.addActionListener(this); 
+        howToPlay.addActionListener(this); 
+
 		return menuBar;
 	}
 	
@@ -511,6 +520,23 @@ public class Board extends JFrame {
 	 */
 	public GameState getGameState() {
 		return new GameState(cells, gameTimer);
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if(e.getSource() == save) {
+			System.out.println("saving");
+			// TODO: save
+		}
+		else if(e.getSource() == load) {
+			System.out.println("loading");
+			// TODO: load
+		}
+		else if(e.getSource() == howToPlay) {
+			System.out.println("this is how to play");
+			// TODO: how to play
+		}
+		
 	}
 
 }
