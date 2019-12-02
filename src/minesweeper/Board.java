@@ -11,6 +11,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -316,8 +317,19 @@ public class Board extends JFrame {
 	private JMenuBar createMenuBar() {
 		menuBar = new JMenuBar();
 		
-		JMenu save = new JMenu("Save");
-		menuBar.add(save);
+		JMenu fileMenu = new JMenu("File");
+		JMenu helpMenu = new JMenu("Help");
+		
+		JMenuItem save = new JMenuItem("Save");
+		JMenuItem load = new JMenuItem("Load");
+		JMenuItem howToPlay = new JMenuItem("How to Play");
+		
+		fileMenu.add(save);
+		fileMenu.add(load);
+		helpMenu.add(howToPlay);
+		
+		menuBar.add(fileMenu);
+		menuBar.add(helpMenu);
 		
 		return menuBar;
 	}
