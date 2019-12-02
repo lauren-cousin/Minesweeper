@@ -27,20 +27,20 @@ public class GameTimer {
 		timer = new Timer(1000, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				getTime();
+				setLblText();
 			};
 		});
 	}
 	
 	/**
-	 * Creates the timer label, containing a timer icon and displaying the current game 
-	 * duration in seconds.
+	 * Creates the timer label, containing an hourglass icon and displaying the
+	 * current game duration in seconds.
 	 * 
 	 * @return the timer label
 	 */
 	public JLabel createLblTimer() {
 		// TODO: Margins, font. Possibly move this to Board
-		lblTimer = new JLabel("");
+		lblTimer = new JLabel();
 		lblTimer.setOpaque(true);
 		lblTimer.setIcon(Board.TIMER_ICON);
 		lblTimer.setText(time);
@@ -67,16 +67,24 @@ public class GameTimer {
 	/**
 	 * Gets the elapsed time and updates the timer label with that time in seconds.
 	 */
-	public void getTime() {
-		long currentTime = System.currentTimeMillis();
-		long elapsedTime = (currentTime - startTime) / 1000;
+	public void setLblText() {
+		long elapsedSeconds = getTime() / 1000;
 
-		if(elapsedTime < 10) {
-			lblTimer.setText("0" + String.valueOf(elapsedTime));
+		if(elapsedSeconds < 10) {
+			lblTimer.setText("0" + String.valueOf(elapsedSeconds));
 		}
 		else {
-			lblTimer.setText(String.valueOf(elapsedTime));
+			lblTimer.setText(String.valueOf(elapsedSeconds));
 		}
+	}
+	
+	/**
+	 * Returns the amount of time in milliseconds since the timer started.
+	 * 
+	 * @return the time in milliseconds
+	 */
+	public long getTime() {
+		return System.currentTimeMillis() - startTime;
 	}
 
 }

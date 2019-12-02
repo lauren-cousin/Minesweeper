@@ -2,9 +2,16 @@ package minesweeper;
 
 import java.awt.Color;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
 /**
+ * Represents a single cell in a Minesweeper game board.
+ * <p>
+ * The cell may contain a hidden mine, and the user may mark it with a flag or
+ * click it to reveal whether it has a mine. If it has a mine, revealing it
+ * causes the cell to turn red; otherwise, it displays the number of adjacent
+ * cells which have mines.
  * 
  * @author cameronlentz
  *
@@ -18,27 +25,32 @@ public class Cell extends JButton {
 	private int numAdjacentMines;
 	
 	/**
-	 * Creates a cell with no mine and no flag.
+	 * Constructs a fresh cell with no mine and no flag.
 	 */
 	public Cell() {
-		super();
-		
-		mine = false;
-		flag = false;
-		numAdjacentMines = 0;
+		this(false, false, false);
 	}
 	
 	/**
-	 * Creates a cell with parameters, to be used when restoring a saved game.
+	 * Constructs a cell based on the parameters.
 	 * 
 	 * @param mine whether this cell has a mine
 	 * @param flag whether this cell is marked with a flag
 	 * @param revealed whether this cell has been revealed
 	 */
 	public Cell(boolean mine, boolean flag, boolean revealed) {
-		this.mine = mine;
-		this.flag = flag;
-		this.revealed = revealed;
+		super();
+		
+		setBackground(new Color(200, 200, 200)); // light grey
+		setOpaque(true);
+		
+		if(mine)
+			setMine();
+		if(revealed)
+			reveal();
+		if(flag)
+			toggleFlag();
+		
 		numAdjacentMines = 0;
 	}
 	
@@ -107,7 +119,6 @@ public class Cell extends JButton {
 		return flag;
 	}
 	
-	
 	/**
 	 * Reveals this cell, unless it is flagged. If the cell is a mine, you lose
 	 * the game; otherwise, the cell turns a lighter color and is marked with
@@ -120,13 +131,12 @@ public class Cell extends JButton {
 		
 		if(mine) {
 			setBackground(Color.RED);
-			// TODO: Finish lose condition
+			// TODO: Mine icon?
 		} else {
 			setBackground(Color.WHITE);
-			if(numAdjacentMines == 0) {
-				// TODO: Reveal adjacent cells
-			} else {
-				setText(Integer.toString(numAdjacentMines));
+			if(numAdjacentMines != 0) {
+				setIcon(new ImageIcon(Cell.class.getResource(
+						"/resources/" + numAdjacentMines + ".png")));
 			}
 		}
 		
