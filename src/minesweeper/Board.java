@@ -12,6 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -529,15 +530,26 @@ public class Board extends JFrame implements ActionListener, Serializable {
 			System.out.println("loading");
 			contentPane.remove(grid);
 			contentPane.invalidate();
+			
 			game.load(getGameState());
+			
 			contentPane.add(grid);
 			contentPane.validate();
 			contentPane.repaint();
 		}
 		// How to play
 		else if (e.getSource() == howToPlay) {
-			System.out.println("this is how to play");
-			// TODO: how to play
+			JOptionPane.showMessageDialog(contentPane, "The game contains a number of unmarked "
+					+ "square buttons in a grid, and some of these squares contain hidden mines. \n\n"
+					+ "Click squares to reveal them. \n\n"
+					+ "The goal is to reveal all of the safe squares without clicking any mines. \n\n"
+					+ "When a safe square is revealed, it is labeled with the number of mines in the 8 "
+					+ "surrounding squares. \n\n"
+					+ "If you suspect that a square has a mine, mark it with a flag, "
+					+ "which prevents it from being accidentally revealed. \n\n"
+					+ "A timer keeps track of how long you've been playing. \n\n"
+					+ "To mark a cell with a flag, click the flag button then the cells you want to "
+					+ "mark. \n\n", "How to play Minesweeper", JOptionPane.INFORMATION_MESSAGE);
 		}
 
 	}
