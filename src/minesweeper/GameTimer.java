@@ -2,6 +2,7 @@ package minesweeper;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.Serializable;
 
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
@@ -13,7 +14,9 @@ import javax.swing.Timer;
  * @author laurencousin
  *
  */
-public class GameTimer {
+public class GameTimer implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 	private String time = "00";
 	private Timer timer;
 	public JLabel lblTimer;

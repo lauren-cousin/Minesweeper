@@ -1,6 +1,7 @@
 package minesweeper;
 
 import java.awt.Color;
+import java.io.Serializable;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -16,9 +17,10 @@ import javax.swing.JButton;
  * @author cameronlentz
  *
  */
-@SuppressWarnings("serial")
-public class Cell extends JButton {
 
+public class Cell extends JButton implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 	private boolean mine;
 	private boolean flag;
 	private boolean revealed;

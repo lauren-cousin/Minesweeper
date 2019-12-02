@@ -12,8 +12,10 @@ import java.util.Set;
  * @author cameronlentz
  *
  */
-@SuppressWarnings("serial")
+
 public class GameState implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 	private int width;
 	private int height;
 	
@@ -125,6 +127,13 @@ public class GameState implements Serializable {
 	public void setClickedCells(Set<int[]> clickedCells) {
 		this.clickedCells = clickedCells;
 	}
+	
+	/**
+	 * @param currentTime the currentTime to set
+	 */
+	public void setCurrentTime(long currentTime) {
+		this.currentTime = currentTime;
+	}
 
 	/**
 	 * @return the height
@@ -154,6 +163,20 @@ public class GameState implements Serializable {
 		return clickedCells;
 	}
 
+	/**
+	 * @return the currentTime
+	 */
+	public long getCurrentTime() {
+		return currentTime;
+	}
+
 	// TODO: Override toString or something to make the file-writing easy
+	@Override
+	public String toString() {
+		return "GameState [width=" + width + ", height=" + height + ", mineLocations=" + mineLocations
+				+ ", flagLocations=" + flagLocations + ", clickedCells=" + clickedCells + ", currentTime=" + currentTime
+				+ "]";
+	}
+	
 
 }
