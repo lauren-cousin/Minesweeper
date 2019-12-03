@@ -585,7 +585,6 @@ public class Board extends JFrame implements ActionListener, Serializable {
 				grid = createButtonGrid(gameState.getWidth(), gameState.getHeight(), gameState.getMineLocations(),
 						gameState.getFlagLocations(), gameState.getClickedCells());
 				calculateNumAdjacentMines();
-				setBounds(100, 100, CELL_WIDTH * gameState.getWidth() + 30, CELL_HEIGHT * gameState.getHeight() + 150);
 				contentPane.add(grid, BorderLayout.CENTER);
 				gameTimer = new GameTimer(gameState.getCurrentTime());
 				status = Status.INPROGRESS;
