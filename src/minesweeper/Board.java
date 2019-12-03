@@ -572,15 +572,21 @@ public class Board extends JFrame implements ActionListener, Serializable {
 		}
 		// Load game
 		else if (e.getSource() == load) {
-			contentPane.remove(grid);
-			contentPane.invalidate();
-			GameState gameState = game.load();
-			grid = createButtonGrid(gameState.getWidth(), gameState.getHeight(), gameState.getMineLocations(),
-					gameState.getFlagLocations(), gameState.getClickedCells());
-			calculateNumAdjacentMines();
-			contentPane.add(grid, BorderLayout.CENTER);
-			contentPane.validate();
-			contentPane.repaint();
+			if(game.load() == null) {
+				System.out.println("No game selected to load.");
+			}
+			else {
+				contentPane.remove(grid);
+				contentPane.invalidate();
+				GameState gameState = game.load();
+				grid = createButtonGrid(gameState.getWidth(), gameState.getHeight(), gameState.getMineLocations(),
+						gameState.getFlagLocations(), gameState.getClickedCells());
+				calculateNumAdjacentMines();
+				setBounds(100, 100, CELL_WIDTH * gameState.getWidth() + 30, CELL_HEIGHT * gameState.getHeight() + 150);
+				contentPane.add(grid, BorderLayout.CENTER);
+				contentPane.validate();
+				contentPane.repaint();
+			}
 		}
 		// Change difficulty
 		else if (e.getSource() == updateBoardDifficulty) {
@@ -593,30 +599,28 @@ public class Board extends JFrame implements ActionListener, Serializable {
 			String s = (String) JOptionPane.showInputDialog(contentPane, "Select game difficulty:\n",
 					"Select game difficulty", JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 
-			if ((s != null) && (s.length() > 0)) {
-				try {
-					if (s.toString().toLowerCase().contentEquals("easy")) {
-						newWidth = 9;
-						newHeight = 9;
-						newMines = 10;
-						dispose();
-						minesweeper.newGame(newWidth, newHeight, newMines);
-					} else if (s.toString().toLowerCase().contentEquals("medium")) {
-						newWidth = 15;
-						newHeight = 15;
-						newMines = 111;
-						dispose();
-						minesweeper.newGame(newWidth, newHeight, newMines);
-					} else if (s.toString().toLowerCase().contentEquals("hard")) {
-						newWidth = 20;
-						newHeight = 20;
-						newMines = 150;
-						dispose();
-						minesweeper.newGame(newWidth, newHeight, newMines);
-					}
-				} catch (Exception e1) {
-					e1.printStackTrace();
+			try {
+				if (s.toString().toLowerCase().contentEquals("easy")) {
+					newWidth = 9;
+					newHeight = 9;
+					newMines = 10;
+					dispose();
+					minesweeper.newGame(newWidth, newHeight, newMines);
+				} else if (s.toString().toLowerCase().contentEquals("medium")) {
+					newWidth = 15;
+					newHeight = 15;
+					newMines = 111;
+					dispose();
+					minesweeper.newGame(newWidth, newHeight, newMines);
+				} else if (s.toString().toLowerCase().contentEquals("hard")) {
+					newWidth = 20;
+					newHeight = 20;
+					newMines = 150;
+					dispose();
+					minesweeper.newGame(newWidth, newHeight, newMines);
 				}
+			} catch (Exception e1) {
+				e1.printStackTrace();
 			}
 		}
 		// How to play

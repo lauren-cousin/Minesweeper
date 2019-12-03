@@ -1,6 +1,7 @@
 package minesweeper;
 
 import java.awt.EventQueue;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -10,6 +11,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -83,6 +85,9 @@ public class Minesweeper implements Serializable {
 				e.printStackTrace();
 			}
 		}
+		else if (response == JFileChooser.CANCEL_OPTION) {
+			 JOptionPane.showMessageDialog(null, "Please select a location and file name to save.");
+		}
 	}
 
 	/**
@@ -99,17 +104,18 @@ public class Minesweeper implements Serializable {
 		if (response == JFileChooser.APPROVE_OPTION) {
 			try {
 				String path = loadFromFile.getSelectedFile().getAbsolutePath();
-
+	
 				ObjectInputStream input = new ObjectInputStream(new FileInputStream(path));
 				savedGameState = (GameState) input.readObject();
-
 				input.close();
-
 				return savedGameState;
 
 			} catch (IOException | ClassNotFoundException e) {
 				e.printStackTrace();
 			}
+		}
+		else if (response == JFileChooser.CANCEL_OPTION) { 
+			JOptionPane.showMessageDialog(null, "Please select a file to load.");
 		}
 		return null;
 	}
@@ -117,9 +123,6 @@ public class Minesweeper implements Serializable {
 	/**
 	 * Terminates the currently running Minesweeper application.
 	 */
-	// TODO: Nice to have feature, possibly add:
-	// 'Are you sure?' messaging before exiting. Timer pauses but game does not exit
-	// yet.
 	public static void quit() {
 		System.exit(0);
 	}
