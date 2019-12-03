@@ -175,6 +175,9 @@ public class Board extends JFrame implements ActionListener, Serializable {
 
 				// Start timer
 				gameTimer.start();
+				
+				// Enable Save menu item
+				save.setEnabled(true);
 			}
 		});
 		bottomPanel.add(btnStart);
@@ -362,6 +365,7 @@ public class Board extends JFrame implements ActionListener, Serializable {
 		JMenu helpMenu = new JMenu("Help");
 
 		save = new JMenuItem("Save");
+		save.setEnabled(false);
 		load = new JMenuItem("Load");
 		updateBoardDifficulty = new JMenuItem("Update Board Difficulty");
 		howToPlay = new JMenuItem("How to Play");
