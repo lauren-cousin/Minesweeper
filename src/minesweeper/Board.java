@@ -67,6 +67,7 @@ public class Board extends JFrame implements ActionListener, Serializable {
 
 	private JMenuItem save;
 	private JMenuItem load;
+	private JMenuItem updateBoardDifficulty;
 	private JMenuItem howToPlay;
 
 	/**
@@ -317,22 +318,27 @@ public class Board extends JFrame implements ActionListener, Serializable {
 		menuBar = new JMenuBar();
 
 		JMenu fileMenu = new JMenu("File");
+		JMenu settingsMenu = new JMenu("Settings");
 		JMenu helpMenu = new JMenu("Help");
 
 		save = new JMenuItem("Save");
 		load = new JMenuItem("Load");
+		updateBoardDifficulty = new JMenuItem("Update Board Difficulty");
 		howToPlay = new JMenuItem("How to Play");
 
 		fileMenu.add(save);
 		fileMenu.add(load);
+		settingsMenu.add(updateBoardDifficulty);
 		helpMenu.add(howToPlay);
 
 		menuBar.add(fileMenu);
+		menuBar.add(settingsMenu);
 		menuBar.add(helpMenu);
 
 		// add ActionListener to JMenuItems
 		save.addActionListener(this);
 		load.addActionListener(this);
+		updateBoardDifficulty.addActionListener(this);
 		howToPlay.addActionListener(this);
 
 		return menuBar;
@@ -536,6 +542,51 @@ public class Board extends JFrame implements ActionListener, Serializable {
 			contentPane.add(grid);
 			contentPane.validate();
 			contentPane.repaint();
+		}
+		// Change difficulty
+		else if (e.getSource() == updateBoardDifficulty) {
+			Minesweeper minesweeper = new Minesweeper();
+			int newWidth;
+			int newHeight;
+			int newMines;
+			
+			Object[] options = {"Easy", "Medium", "Hard"};
+			String s = (String)JOptionPane.showInputDialog(
+                    contentPane,
+                    "Select game difficulty:\n",
+                    "Select game difficulty",
+                    JOptionPane.PLAIN_MESSAGE,
+                    null, options, options[0]);
+			
+			if ((s != null) && (s.length() > 0)) {
+				try {
+					if(s.toString().toLowerCase().contentEquals("easy")) {
+						newWidth = 9;
+						newHeight = 9;
+						newMines = 10;
+						dispose();
+						minesweeper.newGame(newWidth, newHeight, newMines);
+					}
+					else if(s.toString().toLowerCase().contentEquals("medium")) {
+						System.out.println("medium");
+						newWidth = 15;
+						newHeight = 15;
+						newMines = 111;
+						dispose();
+						minesweeper.newGame(newWidth, newHeight, newMines);
+					}
+					else if(s.toString().toLowerCase().contentEquals("hard")) {
+						newWidth = 20;
+						newHeight = 20;
+						newMines = 150;
+						dispose();
+						minesweeper.newGame(newWidth, newHeight, newMines);
+					}
+				}
+				catch(Exception e1) {
+					e1.printStackTrace();
+				}
+			}
 		}
 		// How to play
 		else if (e.getSource() == howToPlay) {

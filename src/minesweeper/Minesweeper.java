@@ -38,6 +38,19 @@ public class Minesweeper implements Serializable {
 			}
 		});
 	}
+	
+	public void newGame(int width, int height, int numMines) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					Board frame = new Board(width, height, numMines);
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
 
 	/**
 	 * Saves the game to a file.
@@ -76,7 +89,7 @@ public class Minesweeper implements Serializable {
 	 * 
 	 * @param file
 	 */
-	public void load(GameState gameState) {
+	public GameState load(GameState gameState) {
 		GameState savedGameState;
 
 		JFileChooser loadFromFile = new JFileChooser();
@@ -107,6 +120,8 @@ public class Minesweeper implements Serializable {
 				e.printStackTrace();
 			}
 		}
+		
+		return gameState;
 
 	}
 
