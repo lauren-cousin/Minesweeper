@@ -357,6 +357,10 @@ public class Board extends JFrame implements ActionListener, Serializable {
 		return title;
 	}
 
+	/**
+	 * Creates the menu bar.
+	 * @return a menu bar
+	 */
 	private JMenuBar createMenuBar() {
 		JMenuBar menuBar = new JMenuBar();
 
@@ -617,31 +621,28 @@ public class Board extends JFrame implements ActionListener, Serializable {
 			Object[] options = { "Easy", "Medium", "Hard" };
 			String s = (String) JOptionPane.showInputDialog(contentPane, "Select game difficulty:\n",
 					"Select game difficulty", JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-
-			if ((s != null) && (s.length() > 0)) {
-				try {
-					if (s.toString().toLowerCase().contentEquals("easy")) {
-						width = 9;
-						height = 9;
-						numMines = 10; // about 1 in 8 cells
-						dispose();
-						minesweeper.newGame(width, height, numMines);
-					} else if (s.toString().toLowerCase().contentEquals("medium")) {
-						width = 15;
-						height = 15;
-						numMines = 45; // 1 in 5 cells
-						dispose();
-						minesweeper.newGame(width, height, numMines);
-					} else if (s.toString().toLowerCase().contentEquals("hard")) {
-						width = 20;
-						height = 20;
-						numMines = 130; // about 1 in 3 cells
-						dispose();
-						minesweeper.newGame(width, height, numMines);
-					}
-				} catch (Exception e1) {
-					e1.printStackTrace();
+			try {
+				if (s.toString().toLowerCase().contentEquals("easy")) {
+					width = 9;
+					height = 9;
+					numMines = 10; // about 1 in 8 cells
+					dispose();
+					minesweeper.newGame(width, height, numMines);
+				} else if (s.toString().toLowerCase().contentEquals("medium")) {
+					width = 15;
+					height = 15;
+					numMines = 45; // 1 in 5 cells
+					dispose();
+					minesweeper.newGame(width, height, numMines);
+				} else if (s.toString().toLowerCase().contentEquals("hard")) {
+					width = 20;
+					height = 20;
+					numMines = 130; // about 1 in 3 cells
+					dispose();
+					minesweeper.newGame(width, height, numMines);
 				}
+			} catch (Exception e1) {
+				e1.printStackTrace();
 			}
 		}
 		
