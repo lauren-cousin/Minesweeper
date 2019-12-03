@@ -585,13 +585,14 @@ public class Board extends JFrame implements ActionListener, Serializable {
 		
 		// Load game
 		else if (e.getSource() == load) {
-			if(game.load() == null) {
+			GameState gameState = game.load();
+			if(gameState == null) {
 				System.out.println("No game selected to load.");
 			}
 			else {
 				contentPane.remove(grid);
 				contentPane.invalidate();
-				GameState gameState = game.load();
+				
 				grid = createButtonGrid(gameState.getWidth(), gameState.getHeight(), gameState.getMineLocations(),
 						gameState.getFlagLocations(), gameState.getClickedCells());
 				calculateNumAdjacentMines();
