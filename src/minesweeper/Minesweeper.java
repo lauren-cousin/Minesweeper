@@ -12,7 +12,7 @@ import java.io.Serializable;
 import javax.swing.JFileChooser;
 
 /**
- * 
+ *
  * @author laurencousin
  * @author cameronlentz
  *
@@ -23,7 +23,7 @@ public class Minesweeper implements Serializable {
 
 	/**
 	 * Launches the application.
-	 * 
+	 *
 	 * @param args
 	 */
 	public static void main(String[] args) {
@@ -39,6 +39,13 @@ public class Minesweeper implements Serializable {
 		});
 	}
 
+	/**
+	 * Initializes a new game with the specified width, height, and number of mines
+	 *
+	 * @param width    the width of the board in cells
+	 * @param height   the height of the board in cells
+	 * @param numMines the number of mines in the board
+	 */
 	public void newGame(int width, int height, int numMines) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -54,8 +61,8 @@ public class Minesweeper implements Serializable {
 
 	/**
 	 * Saves the game to a file.
-	 * 
-	 * @param fileName
+	 *
+	 * @param gameState the game state to save
 	 */
 	public void save(GameState gameState) {
 		JFileChooser saveToFile = new JFileChooser();
@@ -75,19 +82,16 @@ public class Minesweeper implements Serializable {
 				output.writeObject(gameState);
 				output.flush();
 				output.close();
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
-
 	}
 
 	/**
-	 * Loads the game from a file.
-	 * 
-	 * @param file
+	 * Returns the game state loaded from a file.
+	 *
+	 * @return the game state
 	 */
 	public GameState load() {
 		GameState savedGameState;
@@ -104,20 +108,14 @@ public class Minesweeper implements Serializable {
 				System.out.println(savedGameState.toString());
 
 				input.close();
-		
+
 				return savedGameState;
 
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (ClassNotFoundException e) {
+			} catch (IOException | ClassNotFoundException e) {
 				e.printStackTrace();
 			}
 		}
-		
 		return null;
-
 	}
 
 	/**

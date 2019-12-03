@@ -25,37 +25,37 @@ public class Cell extends JButton implements Serializable {
 	private boolean flag;
 	private boolean revealed;
 	private int numAdjacentMines;
-	
+
 	/**
 	 * Constructs a fresh cell with no mine and no flag.
 	 */
 	public Cell() {
 		this(false, false, false);
 	}
-	
+
 	/**
 	 * Constructs a cell based on the parameters.
 	 * 
-	 * @param mine whether this cell has a mine
-	 * @param flag whether this cell is marked with a flag
+	 * @param mine     whether this cell has a mine
+	 * @param flag     whether this cell is marked with a flag
 	 * @param revealed whether this cell has been revealed
 	 */
 	public Cell(boolean mine, boolean flag, boolean revealed) {
 		super();
-		
+
 		setBackground(new Color(200, 200, 200)); // light grey
 		setOpaque(true);
-		
-		if(mine)
+
+		if (mine)
 			setMine();
-		if(revealed)
+		if (revealed)
 			reveal();
-		if(flag)
+		if (flag)
 			toggleFlag();
-		
+
 		numAdjacentMines = 0;
 	}
-	
+
 	/**
 	 * Returns true if and only if there is a mine in this cell.
 	 * 
@@ -64,27 +64,25 @@ public class Cell extends JButton implements Serializable {
 	public boolean hasMine() {
 		return mine;
 	}
-	
+
 	/**
-	 * Places a mine in this cell. This method is used when creating
-	 * a game board.
+	 * Places a mine in this cell. This method is used when creating a game board.
 	 */
 	public void setMine() {
 		mine = true;
 	}
 
 	/**
-	 * Tells this cell how many mines are adjacent to it in the board. If this
-	 * cell has a mine, the number does not matter so long as it is not 0.
+	 * Tells this cell how many mines are adjacent to it in the board. If this cell
+	 * has a mine, the number does not matter so long as it is not 0.
 	 * 
 	 * @param numAdjacentMines the number of adjacent mines
 	 */
 	public void setNumAdjacentMines(int numAdjacentMines) {
 		this.numAdjacentMines = numAdjacentMines;
-		
-		if(revealed && numAdjacentMines != 0) {
-			setIcon(new ImageIcon(Cell.class.getResource(
-					"/resources/" + numAdjacentMines + ".png")));
+
+		if (revealed && numAdjacentMines != 0) {
+			setIcon(new ImageIcon(Cell.class.getResource("/resources/" + numAdjacentMines + ".png")));
 		}
 	}
 
@@ -111,12 +109,12 @@ public class Cell extends JButton implements Serializable {
 	 * revealed.
 	 */
 	public void toggleFlag() {
-		if(!revealed) {
+		if (!revealed) {
 			flag = !flag;
-			setIcon(flag? Board.FLAG_ICON : null);
+			setIcon(flag ? Board.FLAG_ICON : null);
 		}
 	}
-	
+
 	/**
 	 * Returns true if and only if this cell is marked with a flag.
 	 * 
@@ -125,27 +123,27 @@ public class Cell extends JButton implements Serializable {
 	public boolean hasFlag() {
 		return flag;
 	}
-	
+
 	/**
-	 * Reveals this cell, unless it is flagged. If the cell is a mine, you lose
-	 * the game; otherwise, the cell turns a lighter color and is marked with
-	 * the number of adjacent mines (if any).
+	 * Reveals this cell, unless it is flagged. If the cell is a mine, you lose the
+	 * game; otherwise, the cell turns a lighter color and is marked with the number
+	 * of adjacent mines (if any).
 	 */
 	public void reveal() {
-		if(flag) return;
-		
+		if (flag)
+			return;
+
 		revealed = true;
-		
-		if(mine) {
+
+		if (mine) {
 			setBackground(Color.RED);
 			// TODO: Mine icon?
 		} else {
 			setBackground(Color.WHITE);
-			if(numAdjacentMines != 0) {
-				setIcon(new ImageIcon(Cell.class.getResource(
-						"/resources/" + numAdjacentMines + ".png")));
+			if (numAdjacentMines != 0) {
+				setIcon(new ImageIcon(Cell.class.getResource("/resources/" + numAdjacentMines + ".png")));
 			}
 		}
-		
+
 	}
 }

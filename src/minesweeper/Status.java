@@ -2,6 +2,7 @@ package minesweeper;
 
 /**
  * Represents the statuses a game of Minesweeper can have.
+ * 
  * @author laurencousin
  *
  */

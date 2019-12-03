@@ -18,18 +18,18 @@ public class GameState implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private int width;
 	private int height;
-	
+
 	/*
-	 * Each int[] in these sets is an array of two numbers, an x-coordinate
-	 * and a y-coordinate. Thus, the sets track all the coordinate pairs where
-	 * the cell has the respective property. 
+	 * Each int[] in these sets is an array of two numbers, an x-coordinate and a
+	 * y-coordinate. Thus, the sets track all the coordinate pairs where the cell
+	 * has the respective property.
 	 */
 	private Set<int[]> mineLocations;
 	private Set<int[]> flagLocations;
 	private Set<int[]> clickedCells;
-	
+
 	private long currentTime;
-	
+
 	/**
 	 * Generates a game state from a grid of cells and a timer.
 	 * 
@@ -39,45 +39,45 @@ public class GameState implements Serializable {
 	public GameState(Cell[][] cells, GameTimer timer) {
 		height = cells.length;
 		width = cells[0].length;
-		
+
 		mineLocations = new HashSet<>();
 		flagLocations = new HashSet<>();
 		clickedCells = new HashSet<>();
-		
-		for(int x = 0; x < cells.length; x++) {
-			for(int y = 0; y < cells[0].length; y++) {
-				if(cells[x][y].hasMine()) {
-					mineLocations.add(new int[]{x, y});
+
+		for (int x = 0; x < cells.length; x++) {
+			for (int y = 0; y < cells[0].length; y++) {
+				if (cells[x][y].hasMine()) {
+					mineLocations.add(new int[] { x, y });
 				}
-				if(cells[x][y].hasFlag()) {
-					flagLocations.add(new int[]{x, y});
+				if (cells[x][y].hasFlag()) {
+					flagLocations.add(new int[] { x, y });
 				}
-				if(cells[x][y].isRevealed()) {
-					clickedCells.add(new int[]{x, y});
+				if (cells[x][y].isRevealed()) {
+					clickedCells.add(new int[] { x, y });
 				}
 			}
 		}
-		
+
 		currentTime = timer.getTime();
 	}
-	
+
 	/**
 	 * Constructs a GameState from the width, height, mine and flag locations,
-	 * clicked cells, and current time. This can be used to initialize a
-	 * GameState after reading these values from a file. 
+	 * clicked cells, and current time. This can be used to initialize a GameState
+	 * after reading these values from a file.
 	 * 
-	 * @param width the board width
-	 * @param height the board height
+	 * @param width         the board width
+	 * @param height        the board height
 	 * @param mineLocations the coordinate pairs (arrays of two integers) where
-	 * mines are located
+	 *                      mines are located
 	 * @param flagLocations the coordinate pairs (arrays of two integers) where
-	 * flags have been placed
-	 * @param clickedCells the coordinate pairs (arrays of two integers) where
-	 * the user has clicked
-	 * @param currentTime the current game time in milliseconds
+	 *                      flags have been placed
+	 * @param clickedCells  the coordinate pairs (arrays of two integers) where the
+	 *                      user has clicked
+	 * @param currentTime   the current game time in milliseconds
 	 */
-	public GameState(int width, int height, Set<int[]> mineLocations,
-			Set<int[]> flagLocations, Set<int[]> clickedCells, long currentTime) {
+	public GameState(int width, int height, Set<int[]> mineLocations, Set<int[]> flagLocations, Set<int[]> clickedCells,
+			long currentTime) {
 		this.width = width;
 		this.height = height;
 		this.mineLocations = mineLocations;
@@ -85,7 +85,7 @@ public class GameState implements Serializable {
 		this.clickedCells = clickedCells;
 		this.currentTime = currentTime;
 	}
-	
+
 	/**
 	 * @return the width
 	 */
@@ -127,7 +127,7 @@ public class GameState implements Serializable {
 	public void setClickedCells(Set<int[]> clickedCells) {
 		this.clickedCells = clickedCells;
 	}
-	
+
 	/**
 	 * @param currentTime the currentTime to set
 	 */
@@ -170,13 +170,12 @@ public class GameState implements Serializable {
 		return currentTime;
 	}
 
-	// TODO: Override toString or something to make the file-writing easy
+	// TODO: is this needed?
 	@Override
 	public String toString() {
 		return "GameState [width=" + width + ", height=" + height + ", mineLocations=" + mineLocations
 				+ ", flagLocations=" + flagLocations + ", clickedCells=" + clickedCells + ", currentTime=" + currentTime
 				+ "]";
 	}
-	
 
 }
