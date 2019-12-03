@@ -585,13 +585,14 @@ public class Board extends JFrame implements ActionListener, Serializable {
 		
 		// Load game
 		else if (e.getSource() == load) {
-			if(game.load() == null) {
+			GameState gameState = game.load();
+			if(gameState == null) {
 				System.out.println("No game selected to load.");
 			}
 			else {
 				contentPane.remove(grid);
 				contentPane.invalidate();
-				GameState gameState = game.load();
+				
 				grid = createButtonGrid(gameState.getWidth(), gameState.getHeight(), gameState.getMineLocations(),
 						gameState.getFlagLocations(), gameState.getClickedCells());
 				calculateNumAdjacentMines();
@@ -613,10 +614,6 @@ public class Board extends JFrame implements ActionListener, Serializable {
 		// Change difficulty
 		else if (e.getSource() == updateBoardDifficulty) {
 			Minesweeper minesweeper = new Minesweeper();
-			int newWidth;
-			int newHeight;
-			int newMines;
-
 			Object[] options = { "Easy", "Medium", "Hard" };
 			String s = (String) JOptionPane.showInputDialog(contentPane, "Select game difficulty:\n",
 					"Select game difficulty", JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
@@ -624,23 +621,23 @@ public class Board extends JFrame implements ActionListener, Serializable {
 			if ((s != null) && (s.length() > 0)) {
 				try {
 					if (s.toString().toLowerCase().contentEquals("easy")) {
-						newWidth = 9;
-						newHeight = 9;
-						newMines = 10; // about 1 in 8 cells
+						width = 9;
+						height = 9;
+						numMines = 10; // about 1 in 8 cells
 						dispose();
-						minesweeper.newGame(newWidth, newHeight, newMines);
+						minesweeper.newGame(width, height, numMines);
 					} else if (s.toString().toLowerCase().contentEquals("medium")) {
-						newWidth = 15;
-						newHeight = 15;
-						newMines = 45; // 1 in 5 cells
+						width = 15;
+						height = 15;
+						numMines = 45; // 1 in 5 cells
 						dispose();
-						minesweeper.newGame(newWidth, newHeight, newMines);
+						minesweeper.newGame(width, height, numMines);
 					} else if (s.toString().toLowerCase().contentEquals("hard")) {
-						newWidth = 20;
-						newHeight = 20;
-						newMines = 130; // about 1 in 3 cells
+						width = 20;
+						height = 20;
+						numMines = 130; // about 1 in 3 cells
 						dispose();
-						minesweeper.newGame(newWidth, newHeight, newMines);
+						minesweeper.newGame(width, height, numMines);
 					}
 				} catch (Exception e1) {
 					e1.printStackTrace();
