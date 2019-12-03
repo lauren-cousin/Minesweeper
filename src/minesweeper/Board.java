@@ -570,6 +570,9 @@ public class Board extends JFrame implements ActionListener, Serializable {
 		return new GameState(cells, gameTimer);
 	}
 
+	/**
+	 * Handles actions for the menu bar options: Save, Load, Change Difficulty, How to Play.
+	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Minesweeper game = new Minesweeper();
@@ -579,6 +582,7 @@ public class Board extends JFrame implements ActionListener, Serializable {
 			gameTimer.stop();
 			game.save(getGameState());
 		}
+		
 		// Load game
 		else if (e.getSource() == load) {
 			if(game.load() == null) {
@@ -643,6 +647,7 @@ public class Board extends JFrame implements ActionListener, Serializable {
 				}
 			}
 		}
+		
 		// How to play
 		else if (e.getSource() == howToPlay) {
 			JOptionPane.showMessageDialog(contentPane, "The game contains a number of unmarked "

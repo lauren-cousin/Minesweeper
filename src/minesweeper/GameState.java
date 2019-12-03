@@ -8,7 +8,7 @@ import java.util.Set;
  * Represents the state of a game of Minesweeper, which can be read from an
  * active game or from a file. The game state can then be used to write a save
  * file or resume a game.
- * 
+ *
  * @author cameronlentz
  *
  */
@@ -32,7 +32,7 @@ public class GameState implements Serializable {
 
 	/**
 	 * Generates a game state from a grid of cells and a timer.
-	 * 
+	 *
 	 * @param cells the cells in the board
 	 * @param timer the game's timer
 	 */
@@ -65,7 +65,7 @@ public class GameState implements Serializable {
 	 * Constructs a GameState from the width, height, mine and flag locations,
 	 * clicked cells, and current time. This can be used to initialize a GameState
 	 * after reading these values from a file.
-	 * 
+	 *
 	 * @param width         the board width
 	 * @param height        the board height
 	 * @param mineLocations the coordinate pairs (arrays of two integers) where
@@ -91,48 +91,6 @@ public class GameState implements Serializable {
 	 */
 	public int getWidth() {
 		return width;
-	}
-
-	/**
-	 * @param width the width to set
-	 */
-	public void setWidth(int width) {
-		this.width = width;
-	}
-
-	/**
-	 * @param height the height to set
-	 */
-	public void setHeight(int height) {
-		this.height = height;
-	}
-
-	/**
-	 * @param mineLocations the mineLocations to set
-	 */
-	public void setMineLocations(Set<int[]> mineLocations) {
-		this.mineLocations = mineLocations;
-	}
-
-	/**
-	 * @param flagLocations the flagLocations to set
-	 */
-	public void setFlagLocations(Set<int[]> flagLocations) {
-		this.flagLocations = flagLocations;
-	}
-
-	/**
-	 * @param clickedCells the clickedCells to set
-	 */
-	public void setClickedCells(Set<int[]> clickedCells) {
-		this.clickedCells = clickedCells;
-	}
-
-	/**
-	 * @param currentTime the currentTime to set
-	 */
-	public void setCurrentTime(long currentTime) {
-		this.currentTime = currentTime;
 	}
 
 	/**
@@ -168,14 +126,6 @@ public class GameState implements Serializable {
 	 */
 	public long getCurrentTime() {
 		return currentTime;
-	}
-
-	// TODO: is this needed?
-	@Override
-	public String toString() {
-		return "GameState [width=" + width + ", height=" + height + ", mineLocations=" + mineLocations
-				+ ", flagLocations=" + flagLocations + ", clickedCells=" + clickedCells + ", currentTime=" + currentTime
-				+ "]";
 	}
 
 }
