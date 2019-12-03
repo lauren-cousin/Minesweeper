@@ -567,8 +567,8 @@ public class Board extends JFrame implements ActionListener, Serializable {
 
 		// Save game
 		if (e.getSource() == save) {
-			System.out.println("saving");
-			game.save(getGameState()); // TODO: get user input here
+			gameTimer.stop();
+			game.save(getGameState());
 		}
 		// Load game
 		else if (e.getSource() == load) {
