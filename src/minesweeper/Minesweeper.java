@@ -76,9 +76,6 @@ public class Minesweeper implements Serializable {
 				FileOutputStream saveFile = new FileOutputStream(fileName);
 				ObjectOutputStream output = new ObjectOutputStream(saveFile);
 
-				System.out.println("output: " + output);
-				System.out.println("game state: " + gameState);
-
 				output.writeObject(gameState);
 				output.flush();
 				output.close();
@@ -105,7 +102,6 @@ public class Minesweeper implements Serializable {
 
 				ObjectInputStream input = new ObjectInputStream(new FileInputStream(path));
 				savedGameState = (GameState) input.readObject();
-				System.out.println(savedGameState.toString());
 
 				input.close();
 

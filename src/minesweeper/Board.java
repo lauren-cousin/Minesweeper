@@ -572,7 +572,6 @@ public class Board extends JFrame implements ActionListener, Serializable {
 		}
 		// Load game
 		else if (e.getSource() == load) {
-			System.out.println("loading");
 			contentPane.remove(grid);
 			contentPane.invalidate();
 			GameState gameState = game.load();
@@ -603,7 +602,6 @@ public class Board extends JFrame implements ActionListener, Serializable {
 						dispose();
 						minesweeper.newGame(newWidth, newHeight, newMines);
 					} else if (s.toString().toLowerCase().contentEquals("medium")) {
-						System.out.println("medium");
 						newWidth = 15;
 						newHeight = 15;
 						newMines = 111;
