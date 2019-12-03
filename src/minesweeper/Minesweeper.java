@@ -38,7 +38,7 @@ public class Minesweeper implements Serializable {
 			}
 		});
 	}
-	
+
 	public void newGame(int width, int height, int numMines) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -89,7 +89,7 @@ public class Minesweeper implements Serializable {
 	 * 
 	 * @param file
 	 */
-	public GameState load(GameState gameState) {
+	public GameState load() {
 		GameState savedGameState;
 
 		JFileChooser loadFromFile = new JFileChooser();
@@ -103,14 +103,9 @@ public class Minesweeper implements Serializable {
 				savedGameState = (GameState) input.readObject();
 				System.out.println(savedGameState.toString());
 
-				gameState.setWidth(savedGameState.getWidth());
-				gameState.setHeight(savedGameState.getHeight());
-				gameState.setMineLocations(savedGameState.getMineLocations());
-				gameState.setFlagLocations(savedGameState.getFlagLocations());
-				gameState.setClickedCells(savedGameState.getClickedCells());
-				gameState.setCurrentTime(savedGameState.getCurrentTime());
-
 				input.close();
+		
+				return savedGameState;
 
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
@@ -121,7 +116,7 @@ public class Minesweeper implements Serializable {
 			}
 		}
 		
-		return gameState;
+		return null;
 
 	}
 

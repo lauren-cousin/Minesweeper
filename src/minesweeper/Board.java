@@ -93,7 +93,7 @@ public class Board extends JFrame implements ActionListener, Serializable {
 			throw new IllegalArgumentException("Too many mines for the selected " + "board size (should have at most "
 					+ width * height / 2 + " for " + width + "*" + height + " board)");
 		}
-
+		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, CELL_WIDTH * width + 30, CELL_HEIGHT * height + 150);
 		setTitle("Minesweeper");
@@ -189,7 +189,7 @@ public class Board extends JFrame implements ActionListener, Serializable {
 
 		return bottomPanel;
 	}
-
+	
 	/**
 	 * Creates the button grid, containing a grid of clickable cells.
 	 * 
@@ -198,6 +198,26 @@ public class Board extends JFrame implements ActionListener, Serializable {
 	 * @return the button grid
 	 */
 	private JPanel createButtonGrid(int width, int height) {
+		return createButtonGrid(width, height, new HashSet<int[]>(),
+				new HashSet<int[]>(), new HashSet<int[]>());
+	}
+
+	/**
+	 * Creates the button grid with cells whose attributes are defined by the
+	 * parameters.
+	 * 
+	 * @param width  the number of columns in the grid
+	 * @param height the number of rows in the grid
+	 * @param mineLocations a set of arrays representing coordinate pairs where
+	 * mines are hidden
+	 * @param flagLocations a set of arrays representing coordinate pairs where
+	 * flags have been placed
+	 * @param clickedCells a set of arrays representing coordinate pairs where
+	 * the cell has been revealed
+	 * @return the button grid
+	 */
+	private JPanel createButtonGrid(int width, int height,
+			Set<int[]> mineLocations, Set<int[]> flagLocations, Set<int[]> clickedCells) {
 		/*
 		 * Each element in cells is an array representing a horizontal row, so the first
 		 * number here is the height (number of rows).
@@ -210,7 +230,12 @@ public class Board extends JFrame implements ActionListener, Serializable {
 
 		for (int x = 0; x < cells.length; x++) {
 			for (int y = 0; y < cells[0].length; y++) {
-				cells[x][y] = new Cell();
+				// Construct cell based on whether these coordinates are in the sets.
+				cells[x][y] = new Cell(
+						setHasCoords(mineLocations, x, y),
+						setHasCoords(flagLocations, x, y),
+						setHasCoords(clickedCells, x, y)
+				);
 
 				// The action listener requires its local variables to be final
 				final int thisX = x;
@@ -299,6 +324,24 @@ public class Board extends JFrame implements ActionListener, Serializable {
 		gridContainer.add(cellGrid);
 
 		return gridContainer;
+	}
+	
+	/**
+	 * Returns true if the set of int arrays contains one representing the
+	 * given coordinates. (Set.contains() doesn't work as expected for this.)
+	 * 
+	 * @param set
+	 * @param x
+	 * @param y
+	 * @return true if the coordinates are in the set
+	 */
+	private boolean setHasCoords(Set<int[]> set, int x, int y) {
+		for(int[] intArr : set) {
+			if(intArr.length == 2 && intArr[0] == x && intArr[1] == y)
+				return true;
+		}
+		
+		return false;
 	}
 
 	/**
@@ -536,10 +579,12 @@ public class Board extends JFrame implements ActionListener, Serializable {
 			System.out.println("loading");
 			contentPane.remove(grid);
 			contentPane.invalidate();
-			
-			game.load(getGameState());
-			
-			contentPane.add(grid);
+			GameState gameState = game.load();
+			grid = createButtonGrid(gameState.getWidth(), gameState.getHeight(),
+					gameState.getMineLocations(), gameState.getFlagLocations(),
+					gameState.getClickedCells());
+			calculateNumAdjacentMines();
+			contentPane.add(grid, BorderLayout.CENTER);
 			contentPane.validate();
 			contentPane.repaint();
 		}
@@ -549,7 +594,7 @@ public class Board extends JFrame implements ActionListener, Serializable {
 			int newWidth;
 			int newHeight;
 			int newMines;
-			
+
 			Object[] options = {"Easy", "Medium", "Hard"};
 			String s = (String)JOptionPane.showInputDialog(
                     contentPane,
@@ -557,7 +602,7 @@ public class Board extends JFrame implements ActionListener, Serializable {
                     "Select game difficulty",
                     JOptionPane.PLAIN_MESSAGE,
                     null, options, options[0]);
-			
+
 			if ((s != null) && (s.length() > 0)) {
 				try {
 					if(s.toString().toLowerCase().contentEquals("easy")) {
@@ -590,17 +635,8 @@ public class Board extends JFrame implements ActionListener, Serializable {
 		}
 		// How to play
 		else if (e.getSource() == howToPlay) {
-			JOptionPane.showMessageDialog(contentPane, "The game contains a number of unmarked "
-					+ "square buttons in a grid, and some of these squares contain hidden mines. \n\n"
-					+ "Click squares to reveal them. \n\n"
-					+ "The goal is to reveal all of the safe squares without clicking any mines. \n\n"
-					+ "When a safe square is revealed, it is labeled with the number of mines in the 8 "
-					+ "surrounding squares. \n\n"
-					+ "If you suspect that a square has a mine, mark it with a flag, "
-					+ "which prevents it from being accidentally revealed. \n\n"
-					+ "A timer keeps track of how long you've been playing. \n\n"
-					+ "To mark a cell with a flag, click the flag button then the cells you want to "
-					+ "mark. \n\n", "How to play Minesweeper", JOptionPane.INFORMATION_MESSAGE);
+			System.out.println("this is how to play");
+			// TODO: how to play
 		}
 
 	}

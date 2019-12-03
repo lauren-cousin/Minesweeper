@@ -81,6 +81,11 @@ public class Cell extends JButton implements Serializable {
 	 */
 	public void setNumAdjacentMines(int numAdjacentMines) {
 		this.numAdjacentMines = numAdjacentMines;
+		
+		if(revealed && numAdjacentMines != 0) {
+			setIcon(new ImageIcon(Cell.class.getResource(
+					"/resources/" + numAdjacentMines + ".png")));
+		}
 	}
 
 	/**
