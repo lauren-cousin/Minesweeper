@@ -522,6 +522,7 @@ public class Board extends JFrame implements ActionListener, Serializable {
 					// Mine was revealed
 					status = Status.LOSE;
 					gameTimer.stop();
+					save.setEnabled(false);
 					// Reveal all mines & wrongly placed flags to the user
 					for (int x = 0; x < cells.length; x++) {
 						for (int y = 0; y < cells[0].length; y++) {
@@ -540,6 +541,7 @@ public class Board extends JFrame implements ActionListener, Serializable {
 		if (isWon) {
 			status = Status.WIN;
 			gameTimer.stop();
+			save.setEnabled(false);
 			// Mark remaining mines and turn the board a pale green
 			for (Cell[] row : cells) {
 				for (Cell c : row) {
