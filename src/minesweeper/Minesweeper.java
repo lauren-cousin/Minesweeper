@@ -2,7 +2,6 @@ package minesweeper;
 
 import java.awt.EventQueue;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -10,6 +9,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -76,15 +76,15 @@ public class Minesweeper implements Serializable {
 				FileOutputStream saveFile = new FileOutputStream(fileName);
 				ObjectOutputStream output = new ObjectOutputStream(saveFile);
 
-				System.out.println("output: " + output);
-				System.out.println("game state: " + gameState);
-
 				output.writeObject(gameState);
 				output.flush();
 				output.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+		}
+		else if (response == JFileChooser.CANCEL_OPTION) {
+			 JOptionPane.showMessageDialog(null, "Please select a location and file name to save.");
 		}
 	}
 
@@ -102,18 +102,18 @@ public class Minesweeper implements Serializable {
 		if (response == JFileChooser.APPROVE_OPTION) {
 			try {
 				String path = loadFromFile.getSelectedFile().getAbsolutePath();
-
+	
 				ObjectInputStream input = new ObjectInputStream(new FileInputStream(path));
 				savedGameState = (GameState) input.readObject();
-				System.out.println(savedGameState.toString());
-
 				input.close();
-
 				return savedGameState;
 
 			} catch (IOException | ClassNotFoundException e) {
 				e.printStackTrace();
 			}
+		}
+		else if (response == JFileChooser.CANCEL_OPTION) { 
+			JOptionPane.showMessageDialog(null, "Please select a file to load.");
 		}
 		return null;
 	}
@@ -121,9 +121,6 @@ public class Minesweeper implements Serializable {
 	/**
 	 * Terminates the currently running Minesweeper application.
 	 */
-	// TODO: Nice to have feature, possibly add:
-	// 'Are you sure?' messaging before exiting. Timer pauses but game does not exit
-	// yet.
 	public static void quit() {
 		System.exit(0);
 	}

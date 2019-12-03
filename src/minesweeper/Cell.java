@@ -137,7 +137,6 @@ public class Cell extends JButton implements Serializable {
 
 		if (mine) {
 			setBackground(Color.RED);
-			// TODO: Mine icon?
 		} else {
 			setBackground(Color.WHITE);
 			if (numAdjacentMines != 0) {

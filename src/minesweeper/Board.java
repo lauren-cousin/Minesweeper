@@ -69,6 +69,7 @@ public class Board extends JFrame implements ActionListener, Serializable {
 	private JMenuItem load;
 	private JMenuItem updateBoardDifficulty;
 	private JMenuItem howToPlay;
+	private JPanel topPanel;
 
 	/**
 	 * Creates the board with the default parameters (9 cells by 9 cells, with 10
@@ -103,7 +104,7 @@ public class Board extends JFrame implements ActionListener, Serializable {
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
 
-		JPanel topPanel = createTopPanel();
+		topPanel = createTopPanel();
 		contentPane.add(topPanel, BorderLayout.NORTH);
 
 		/*
@@ -174,6 +175,9 @@ public class Board extends JFrame implements ActionListener, Serializable {
 
 				// Start timer
 				gameTimer.start();
+				
+				// Enable Save menu item
+				save.setEnabled(true);
 			}
 		});
 		bottomPanel.add(btnStart);
@@ -189,7 +193,7 @@ public class Board extends JFrame implements ActionListener, Serializable {
 
 		return bottomPanel;
 	}
-
+	
 	/**
 	 * Creates the button grid, containing a grid of clickable cells.
 	 *
@@ -260,7 +264,7 @@ public class Board extends JFrame implements ActionListener, Serializable {
 									revealAround(thisX, thisY);
 								}
 
-								checkGameState();
+								checkStatus();
 							}
 						}
 					}
@@ -321,7 +325,7 @@ public class Board extends JFrame implements ActionListener, Serializable {
 
 		return gridContainer;
 	}
-
+	
 	/**
 	 * Returns true if the set of int arrays contains one representing the given
 	 * coordinates. (Set.contains() doesn't work as expected for this.)
@@ -361,6 +365,7 @@ public class Board extends JFrame implements ActionListener, Serializable {
 		JMenu helpMenu = new JMenu("Help");
 
 		save = new JMenuItem("Save");
+		save.setEnabled(false);
 		load = new JMenuItem("Load");
 		updateBoardDifficulty = new JMenuItem("Update Board Difficulty");
 		howToPlay = new JMenuItem("How to Play");
@@ -498,9 +503,9 @@ public class Board extends JFrame implements ActionListener, Serializable {
 	}
 
 	/**
-	 * Checks the state of the game.
+	 * Checks the status of the game.
 	 */
-	private void checkGameState() {
+	private void checkStatus() {
 		boolean isWon = true;
 		for (Cell[] row : cells) {
 			for (Cell c : row) {
@@ -517,6 +522,7 @@ public class Board extends JFrame implements ActionListener, Serializable {
 					// Mine was revealed
 					status = Status.LOSE;
 					gameTimer.stop();
+					save.setEnabled(false);
 					// Reveal all mines & wrongly placed flags to the user
 					for (int x = 0; x < cells.length; x++) {
 						for (int y = 0; y < cells[0].length; y++) {
@@ -535,6 +541,7 @@ public class Board extends JFrame implements ActionListener, Serializable {
 		if (isWon) {
 			status = Status.WIN;
 			gameTimer.stop();
+			save.setEnabled(false);
 			// Mark remaining mines and turn the board a pale green
 			for (Cell[] row : cells) {
 				for (Cell c : row) {
@@ -546,7 +553,9 @@ public class Board extends JFrame implements ActionListener, Serializable {
 			}
 		}
 
-		if (status != Status.INPROGRESS) {
+		if (status == Status.INPROGRESS) {
+			btnStart.setVisible(false);
+		} else {
 			btnStart.setText("Play again?");
 			btnStart.setVisible(true);
 		}
@@ -561,28 +570,46 @@ public class Board extends JFrame implements ActionListener, Serializable {
 		return new GameState(cells, gameTimer);
 	}
 
+	/**
+	 * Handles actions for the menu bar options: Save, Load, Change Difficulty, How to Play.
+	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Minesweeper game = new Minesweeper();
 
 		// Save game
 		if (e.getSource() == save) {
-			System.out.println("saving");
-			game.save(getGameState()); // TODO: get user input here
+			gameTimer.stop();
+			game.save(getGameState());
 		}
+		
 		// Load game
 		else if (e.getSource() == load) {
-			System.out.println("loading");
-			contentPane.remove(grid);
-			contentPane.invalidate();
-			GameState gameState = game.load();
-			grid = createButtonGrid(gameState.getWidth(), gameState.getHeight(), gameState.getMineLocations(),
-					gameState.getFlagLocations(), gameState.getClickedCells());
-			calculateNumAdjacentMines();
-			contentPane.add(grid, BorderLayout.CENTER);
-			contentPane.validate();
-			contentPane.repaint();
+			if(game.load() == null) {
+				System.out.println("No game selected to load.");
+			}
+			else {
+				contentPane.remove(grid);
+				contentPane.invalidate();
+				GameState gameState = game.load();
+				grid = createButtonGrid(gameState.getWidth(), gameState.getHeight(), gameState.getMineLocations(),
+						gameState.getFlagLocations(), gameState.getClickedCells());
+				calculateNumAdjacentMines();
+				contentPane.add(grid, BorderLayout.CENTER);
+				gameTimer = new GameTimer(gameState.getCurrentTime());
+				status = Status.INPROGRESS;
+				checkStatus();
+				
+				contentPane.remove(topPanel);
+				topPanel = createTopPanel();
+				contentPane.add(topPanel, BorderLayout.NORTH);
+				
+				contentPane.validate();
+				contentPane.repaint();
+				pack();
+			}
 		}
+
 		// Change difficulty
 		else if (e.getSource() == updateBoardDifficulty) {
 			Minesweeper minesweeper = new Minesweeper();
@@ -599,20 +626,19 @@ public class Board extends JFrame implements ActionListener, Serializable {
 					if (s.toString().toLowerCase().contentEquals("easy")) {
 						newWidth = 9;
 						newHeight = 9;
-						newMines = 10;
+						newMines = 10; // about 1 in 8 cells
 						dispose();
 						minesweeper.newGame(newWidth, newHeight, newMines);
 					} else if (s.toString().toLowerCase().contentEquals("medium")) {
-						System.out.println("medium");
 						newWidth = 15;
 						newHeight = 15;
-						newMines = 111;
+						newMines = 45; // 1 in 5 cells
 						dispose();
 						minesweeper.newGame(newWidth, newHeight, newMines);
 					} else if (s.toString().toLowerCase().contentEquals("hard")) {
 						newWidth = 20;
 						newHeight = 20;
-						newMines = 150;
+						newMines = 130; // about 1 in 3 cells
 						dispose();
 						minesweeper.newGame(newWidth, newHeight, newMines);
 					}
@@ -621,6 +647,7 @@ public class Board extends JFrame implements ActionListener, Serializable {
 				}
 			}
 		}
+		
 		// How to play
 		else if (e.getSource() == howToPlay) {
 			JOptionPane.showMessageDialog(contentPane, "The game contains a number of unmarked "
