@@ -27,12 +27,27 @@ public class GameTimer implements Serializable {
 	 * Initializes the timer to be refreshed every 1 second.
 	 */
 	public GameTimer() {
+		this(0);
+	}
+	
+	/**
+	 * Initializes the timer to be refreshed every 1 second, and sets the amount
+	 * of time already on the timer to <code>initialTime</code>.
+	 *
+	 * @param initialTime the time in milliseconds
+	 */
+	public GameTimer(long initialTime) {
 		timer = new Timer(1000, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				setLblText();
 			};
 		});
+		
+		if(initialTime > 0) {
+			start();
+			startTime -= initialTime; // pretend we started however long ago
+		}
 	}
 
 	/**
@@ -55,7 +70,6 @@ public class GameTimer implements Serializable {
 	 */
 	public void start() {
 		startTime = System.currentTimeMillis();
-		timer.setInitialDelay(1000);
 		timer.start();
 	}
 
