@@ -69,6 +69,7 @@ public class Board extends JFrame implements ActionListener, Serializable {
 	private JMenuItem load;
 	private JMenuItem updateBoardDifficulty;
 	private JMenuItem howToPlay;
+	private JPanel topPanel;
 
 	/**
 	 * Creates the board with the default parameters (9 cells by 9 cells, with 10
@@ -103,7 +104,7 @@ public class Board extends JFrame implements ActionListener, Serializable {
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
 
-		JPanel topPanel = createTopPanel();
+		topPanel = createTopPanel();
 		contentPane.add(topPanel, BorderLayout.NORTH);
 
 		/*
@@ -189,7 +190,7 @@ public class Board extends JFrame implements ActionListener, Serializable {
 
 		return bottomPanel;
 	}
-
+	
 	/**
 	 * Creates the button grid, containing a grid of clickable cells.
 	 *
@@ -260,7 +261,7 @@ public class Board extends JFrame implements ActionListener, Serializable {
 									revealAround(thisX, thisY);
 								}
 
-								checkGameState();
+								checkStatus();
 							}
 						}
 					}
@@ -321,7 +322,7 @@ public class Board extends JFrame implements ActionListener, Serializable {
 
 		return gridContainer;
 	}
-
+	
 	/**
 	 * Returns true if the set of int arrays contains one representing the given
 	 * coordinates. (Set.contains() doesn't work as expected for this.)
@@ -498,9 +499,9 @@ public class Board extends JFrame implements ActionListener, Serializable {
 	}
 
 	/**
-	 * Checks the state of the game.
+	 * Checks the status of the game.
 	 */
-	private void checkGameState() {
+	private void checkStatus() {
 		boolean isWon = true;
 		for (Cell[] row : cells) {
 			for (Cell c : row) {
@@ -546,7 +547,9 @@ public class Board extends JFrame implements ActionListener, Serializable {
 			}
 		}
 
-		if (status != Status.INPROGRESS) {
+		if (status == Status.INPROGRESS) {
+			btnStart.setVisible(false);
+		} else {
 			btnStart.setText("Play again?");
 			btnStart.setVisible(true);
 		}
@@ -579,8 +582,17 @@ public class Board extends JFrame implements ActionListener, Serializable {
 					gameState.getFlagLocations(), gameState.getClickedCells());
 			calculateNumAdjacentMines();
 			contentPane.add(grid, BorderLayout.CENTER);
+			gameTimer = new GameTimer(gameState.getCurrentTime());
+			status = Status.INPROGRESS;
+			checkStatus();
+			
+			contentPane.remove(topPanel);
+			topPanel = createTopPanel();
+			contentPane.add(topPanel, BorderLayout.NORTH);
+			
 			contentPane.validate();
 			contentPane.repaint();
+			pack();
 		}
 		// Change difficulty
 		else if (e.getSource() == updateBoardDifficulty) {
@@ -598,19 +610,19 @@ public class Board extends JFrame implements ActionListener, Serializable {
 					if (s.toString().toLowerCase().contentEquals("easy")) {
 						newWidth = 9;
 						newHeight = 9;
-						newMines = 10;
+						newMines = 10; // about 1 in 8 cells
 						dispose();
 						minesweeper.newGame(newWidth, newHeight, newMines);
 					} else if (s.toString().toLowerCase().contentEquals("medium")) {
 						newWidth = 15;
 						newHeight = 15;
-						newMines = 111;
+						newMines = 45; // 1 in 5 cells
 						dispose();
 						minesweeper.newGame(newWidth, newHeight, newMines);
 					} else if (s.toString().toLowerCase().contentEquals("hard")) {
 						newWidth = 20;
 						newHeight = 20;
-						newMines = 150;
+						newMines = 130; // about 1 in 3 cells
 						dispose();
 						minesweeper.newGame(newWidth, newHeight, newMines);
 					}
